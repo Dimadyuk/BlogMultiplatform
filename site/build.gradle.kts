@@ -35,13 +35,12 @@ kotlin {
             implementation(libs.kobweb.silk)
             implementation(libs.silk.icons.fa)
             implementation(libs.kobwebx.markdown)
+            implementation(libs.kotlinx.serialization)
         }
 
         jvmMain.dependencies {
             compileOnly(libs.kobweb.api)
-            implementation(libs.kmongo)
-            implementation(libs.kmongo.database)
-            implementation(libs.kmongo.async)
+            implementation(libs.kmongo.kotlin.driver)
             implementation(libs.kotlinx.serialization)
         }
     }

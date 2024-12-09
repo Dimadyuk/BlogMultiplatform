@@ -1,8 +1,8 @@
-package com.example.blogmultiplatfom.api
+package com.example.blogmultiplatform.api
 
-import com.example.blogmultiplatfom.data.MongoDB
-import com.example.blogmultiplatfom.models.User
-import com.example.blogmultiplatfom.models.UserWithoutPassword
+import com.example.blogmultiplatform.data.MongoDB
+import com.example.blogmultiplatform.models.User
+import com.example.blogmultiplatform.models.UserWithoutPassword
 import com.varabyte.kobweb.api.Api
 import com.varabyte.kobweb.api.ApiContext
 import com.varabyte.kobweb.api.data.getValue

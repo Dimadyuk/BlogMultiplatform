@@ -1,15 +1,14 @@
-package com.example.blogmultiplatfom.data
+package com.example.blogmultiplatform.data
 
-import com.example.blogmultiplatfom.models.User
-import com.example.blogmultiplatfom.utils.Constants.DATABASE_NAME
+import com.example.blogmultiplatform.models.User
+import com.example.blogmultiplatform.utils.Constants.DATABASE_NAME
+import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Filters.and
+import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.and
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
+import kotlinx.coroutines.flow.firstOrNull
 
 @InitApi
 fun initMongoDB(context: InitApiContext) {
@@ -21,19 +20,19 @@ fun initMongoDB(context: InitApiContext) {
 }
 
 class MongoDB(val context: InitApiContext) : MongoRepository {
-    private val client = KMongo.createClient()
+    private val client = MongoClient.create()
     private val database = client.getDatabase(DATABASE_NAME)
-    private val userCollection = database.getCollection<User>()
+    private val userCollection = database.getCollection<User>("user")
 
     override suspend fun checkUserExistence(user: User): User? {
         return try {
             userCollection
-                .findOne {
+                .find(
                     and(
-                        User::username eq user.username,
-                        User::password eq user.password
+                        Filters.eq(User::username.name, user.username),
+                        Filters.eq(User::password.name, user.password)
                     )
-                }
+                ).firstOrNull()
         } catch (e: Exception) {
             context.logger.error(e.message.toString())
             null
