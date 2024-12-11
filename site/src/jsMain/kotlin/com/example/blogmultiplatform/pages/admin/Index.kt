@@ -14,7 +14,6 @@ import org.jetbrains.compose.web.dom.Text
 @Page
 @Composable
 fun HomeScreen() {
-
     Box(
         modifier = Modifier
             .backgroundColor(Colors.White)

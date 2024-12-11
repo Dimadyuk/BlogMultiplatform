@@ -2,7 +2,7 @@
 jetbrains-compose = "1.7.1"
 kobweb = "0.20.0"
 kotlin = "2.1.0"
-kmongo = "5.1.0"
+kmongo = "5.2.1"
 serialization = "1.7.3"
 
 [libraries]
@@ -19,6 +19,7 @@ silk-icons-fa = { module = "com.varabyte.kobwebx:silk-icons-fa", version.ref = "
 silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", version.ref = "kobweb" }
 
 kmongo-kotlin-driver = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "kmongo" }
+kmongo-serialization = { module = "org.mongodb:bson-kotlinx", version.ref = "kmongo" }
 
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 

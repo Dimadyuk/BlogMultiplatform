@@ -40,7 +40,9 @@ kotlin {
 
         jvmMain.dependencies {
             compileOnly(libs.kobweb.api)
+            compileOnly(libs.kobwebx.serialization.kotlinx)
             implementation(libs.kmongo.kotlin.driver)
+            implementation(libs.kmongo.serialization)
             implementation(libs.kotlinx.serialization)
         }
     }
