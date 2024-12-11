@@ -22,9 +22,6 @@ class MongoDB(val context: InitApiContext) : MongoRepository {
     private val userCollection = database.getCollection<User>("user")
 
     override suspend fun checkUserExistence(user: User): User? {
-        println("$client")
-        println("$database")
-        println("$userCollection")
         return try {
             userCollection
                 .find(
