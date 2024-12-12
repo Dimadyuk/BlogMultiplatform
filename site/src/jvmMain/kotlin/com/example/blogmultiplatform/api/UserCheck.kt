@@ -58,6 +58,36 @@ suspend fun userCheck(context: ApiContext) {
     }
 }
 
+@Api(routeOverride = "checkuserid")
+suspend fun checkUserId(context: ApiContext) {
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
+
+    try {
+        val id = context.req.body?.decodeToString()?.let {
+            json.decodeFromString<String>(it)
+        }
+        val result = id?.let {
+            context.data.getValue<MongoDB>().checkUserId(it)
+        }
+        if (result != null) {
+            context.res.setBodyText(
+                json.encodeToString(result)
+            )
+        } else {
+            context.res.setBodyText(
+                json.encodeToString(false)
+            )
+        }
+    } catch (e: Exception) {
+        context.logger.error("Error in checkUserId: ${e.message}")
+        context.res.setBodyText(
+            json.encodeToString(false)
+        )
+    }
+}
+
 private fun hashPassword(password: String): String {
     val messageDigest = MessageDigest.getInstance("SHA-256")
     val hashBytes = messageDigest.digest(password.toByteArray(StandardCharsets.UTF_8))

@@ -20,3 +20,18 @@ suspend fun checkUserExistence(user: User): UserWithoutPassword? {
         null
     }
 }
+
+suspend fun checkUserId(id: String): Boolean {
+    return try {
+        val result = window.api.tryPost(
+            apiPath = "checkuserid",
+            body = Json.encodeToString(id).encodeToByteArray()
+        )
+        result?.decodeToString()?.let {
+            Json.decodeFromString<Boolean>(it)
+        } == true
+    } catch (e: Exception) {
+        println(e.message)
+        false
+    }
+}
