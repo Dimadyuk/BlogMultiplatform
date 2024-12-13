@@ -13,17 +13,16 @@ import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.core.Page
 import org.jetbrains.compose.web.css.px
 
-
-@Page
+@Page(routeOverride = "/admin/myposts")
 @Composable
-fun HomePage() {
+fun MyPostsPage() {
     IsUserLoggedIn {
-        HomeScreen()
+        MyPostsScreen()
     }
 }
 
 @Composable
-fun HomeScreen() {
+fun MyPostsScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize(),
