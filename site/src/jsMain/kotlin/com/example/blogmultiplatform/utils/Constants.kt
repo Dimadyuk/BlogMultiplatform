@@ -5,11 +5,14 @@ object Constants {
     const val SIDE_BAR_WIDTH = 250
     const val PAGE_WIDTH = 1920
     const val COLLAPSED_PANEL_HEIGHT = 100
+    const val HUMOR_API_URL =
+        "https://api.humorapi.com/jokes/random?api-key=4a64d9015fe841d1b5ca8ec179ee5639&max-length=180"
 }
 
 object Res {
     object Image {
         const val LOGO = "/logo.svg"
+        const val LAUGH = "/laugh.png"
     }
     object PathIcon {
         const val home =
