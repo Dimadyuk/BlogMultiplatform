@@ -12,7 +12,7 @@ import com.example.blogmultiplatform.navigation.Screen
 import com.example.blogmultiplatform.styles.NavigationItemStyle
 import com.example.blogmultiplatform.utils.Constants.COLLAPSED_PANEL_HEIGHT
 import com.example.blogmultiplatform.utils.Constants.FONT_FAMILY
-import com.example.blogmultiplatform.utils.Constants.SIDE_BAR_WIDTH
+import com.example.blogmultiplatform.utils.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.utils.Id
 import com.example.blogmultiplatform.utils.Res
 import com.example.blogmultiplatform.utils.logout
@@ -88,7 +88,7 @@ fun SidePanelInternal() {
         modifier = Modifier
             .backgroundColor(Theme.Secondary.rgb)
             .padding(leftRight = 40.px, topBottom = 50.px)
-            .width(SIDE_BAR_WIDTH.px)
+            .width(SIDE_PANEL_WIDTH.px)
             .height(100.vh)
             .position(Position.Fixed)
             .zIndex(9)

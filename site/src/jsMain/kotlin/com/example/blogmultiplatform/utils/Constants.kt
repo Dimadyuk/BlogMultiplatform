@@ -2,7 +2,7 @@ package com.example.blogmultiplatform.utils
 
 object Constants {
     const val FONT_FAMILY = "Roboto"
-    const val SIDE_BAR_WIDTH = 250
+    const val SIDE_PANEL_WIDTH = 250
     const val PAGE_WIDTH = 1920
     const val COLLAPSED_PANEL_HEIGHT = 100
     const val HUMOR_API_URL =

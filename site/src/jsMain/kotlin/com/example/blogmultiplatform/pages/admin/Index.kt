@@ -13,7 +13,7 @@ import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.navigation.Screen
 import com.example.blogmultiplatform.utils.Constants.FONT_FAMILY
 import com.example.blogmultiplatform.utils.Constants.PAGE_WIDTH
-import com.example.blogmultiplatform.utils.Constants.SIDE_BAR_WIDTH
+import com.example.blogmultiplatform.utils.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
 import com.example.blogmultiplatform.utils.Res
 import com.example.blogmultiplatform.utils.fetchRandomJoke
@@ -93,7 +93,7 @@ fun HomeContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(left = if (breakpoint > Breakpoint.MD) SIDE_BAR_WIDTH.px else 0.px),
+            .padding(left = if (breakpoint > Breakpoint.MD) SIDE_PANEL_WIDTH.px else 0.px),
         contentAlignment = Alignment.Center
     ) {
         randomJoke?.let {

@@ -1,9 +1,52 @@
 package com.example.blogmultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.components.AdminPageLayout
+import com.example.blogmultiplatform.models.Category
+import com.example.blogmultiplatform.models.Theme
+import com.example.blogmultiplatform.utils.Constants
+import com.example.blogmultiplatform.utils.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
+import com.varabyte.kobweb.compose.css.Cursor
+import com.varabyte.kobweb.compose.foundation.layout.Arrangement
+import com.varabyte.kobweb.compose.foundation.layout.Box
+import com.varabyte.kobweb.compose.foundation.layout.Column
+import com.varabyte.kobweb.compose.foundation.layout.Row
+import com.varabyte.kobweb.compose.ui.Alignment
+import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.graphics.Colors
+import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
+import com.varabyte.kobweb.compose.ui.modifiers.border
+import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
+import com.varabyte.kobweb.compose.ui.modifiers.classNames
+import com.varabyte.kobweb.compose.ui.modifiers.color
+import com.varabyte.kobweb.compose.ui.modifiers.cursor
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
+import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
+import com.varabyte.kobweb.compose.ui.modifiers.fontSize
+import com.varabyte.kobweb.compose.ui.modifiers.height
+import com.varabyte.kobweb.compose.ui.modifiers.margin
+import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
+import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.outline
+import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.core.Page
+import com.varabyte.kobweb.silk.components.forms.Input
+import com.varabyte.kobweb.silk.components.forms.Switch
+import com.varabyte.kobweb.silk.components.forms.SwitchSize
+import com.varabyte.kobweb.silk.components.layout.SimpleGrid
+import com.varabyte.kobweb.silk.components.layout.numColumns
+import com.varabyte.kobweb.silk.components.text.SpanText
+import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
+import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
+import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.css.LineStyle
+import org.jetbrains.compose.web.css.px
 
 @Page
 @Composable
@@ -15,7 +58,261 @@ fun CreatePage() {
 
 @Composable
 fun CreateScreen() {
-    AdminPageLayout {
+    val breakpoint = rememberBreakpoint()
 
+    var popularSwitch by remember { mutableStateOf(false) }
+    var mainSwitch by remember { mutableStateOf(false) }
+    var sponsoredSwitch by remember { mutableStateOf(false) }
+
+    var title by remember { mutableStateOf("") }
+    var subtitle by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf(Category.Programming) }
+
+    AdminPageLayout {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .margin(topBottom = 50.px)
+                .padding(
+                    left = if (breakpoint > Breakpoint.MD) SIDE_PANEL_WIDTH.px else 0.px
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .maxWidth(700.px),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                SimpleGrid(
+                    numColumns = numColumns(base = 1, sm = 3)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .margin(
+                                right = if (breakpoint < Breakpoint.SM) 0.px else 24.px,
+                                bottom = if (breakpoint < Breakpoint.SM) 12.px else 0.px
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Switch(
+                            modifier = Modifier
+                                .margin(
+                                    right = 8.px
+                                ),
+                            checked = popularSwitch,
+                            onCheckedChange = {
+                                popularSwitch = it
+                            },
+                            size = SwitchSize.LG
+                        )
+                        SpanText(
+                            modifier = Modifier
+                                .fontSize(14.px)
+                                .fontFamily(Constants.FONT_FAMILY)
+                                .color(Theme.HalfBlack.rgb),
+                            text = "Popular"
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .margin(
+                                right = if (breakpoint < Breakpoint.SM) 0.px else 24.px,
+                                bottom = if (breakpoint < Breakpoint.SM) 12.px else 0.px
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Switch(
+                            modifier = Modifier
+                                .margin(
+                                    right = 8.px
+                                ),
+                            checked = mainSwitch,
+                            onCheckedChange = {
+                                mainSwitch = it
+                            },
+                            size = SwitchSize.LG
+                        )
+                        SpanText(
+                            modifier = Modifier
+                                .fontSize(14.px)
+                                .fontFamily(Constants.FONT_FAMILY)
+                                .color(Theme.HalfBlack.rgb),
+                            text = "Main"
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Switch(
+                            modifier = Modifier
+                                .margin(
+                                    right = 8.px
+                                ),
+                            checked = sponsoredSwitch,
+                            onCheckedChange = {
+                                sponsoredSwitch = it
+                            },
+                            size = SwitchSize.LG
+                        )
+                        SpanText(
+                            modifier = Modifier
+                                .fontSize(14.px)
+                                .fontFamily(Constants.FONT_FAMILY)
+                                .color(Theme.HalfBlack.rgb),
+                            text = "Sponsored"
+                        )
+                    }
+                }
+                Input(
+                    type = InputType.Text,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(54.px)
+                        .margin(topBottom = 12.px)
+                        .padding(leftRight = 20.px)
+                        .backgroundColor(Theme.LightGray.rgb)
+                        .color(Colors.Black)
+                        .borderRadius(r = 4.px)
+                        .border(
+                            width = 0.px,
+                            style = LineStyle.None,
+                            color = Colors.Transparent
+                        )
+                        .outline(
+                            width = 0.px,
+                            style = LineStyle.None,
+                            color = Colors.Transparent
+                        )
+                        .fontFamily(Constants.FONT_FAMILY)
+                        .fontSize(16.px),
+                    placeholder = "Title",
+                    value = title,
+                    onValueChange = {
+                        title = it
+                    },
+                )
+                Input(
+                    type = InputType.Text,
+                    focusBorderColor = Theme.Primary.rgb,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(54.px)
+                        .margin(bottom = 12.px)
+                        .padding(leftRight = 20.px)
+                        .backgroundColor(Theme.LightGray.rgb)
+                        .color(Colors.Black)
+                        .borderRadius(r = 4.px)
+                        .border(
+                            width = 0.px,
+                            style = LineStyle.None,
+                            color = Colors.Transparent
+                        )
+                        .outline(
+                            width = 0.px,
+                            style = LineStyle.None,
+                            color = Colors.Transparent
+                        )
+                        .fontFamily(Constants.FONT_FAMILY)
+                        .fontSize(16.px),
+                    placeholder = "Subtitle",
+                    value = subtitle,
+                    onValueChange = {
+                        subtitle = it
+                    },
+                )
+                var expanded by remember { mutableStateOf(false) }
+
+                DropdownMenu(
+                    selectedCategory = selectedCategory,
+                    onCategorySelect = {
+                        expanded = false
+                        selectedCategory = it
+                    },
+                    onCategoryClick = {
+                        expanded = !expanded
+                    },
+                    expanded = expanded
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DropdownMenu(
+    selectedCategory: Category,
+    onCategorySelect: (Category) -> Unit,
+    onCategoryClick: () -> Unit,
+    expanded: Boolean
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.px)
+            .backgroundColor(Theme.LightGray.rgb)
+            .color(Colors.Black)
+            .cursor(Cursor.Pointer)
+            .onClick { onCategoryClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(leftRight = 20.px),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            SpanText(
+                modifier = Modifier
+                    .fontFamily(Constants.FONT_FAMILY)
+                    .fontSize(16.px)
+                    .color(Colors.Black),
+                text = selectedCategory.name
+            )
+            Box(
+                modifier = Modifier
+                    .classNames("dropdown-toggle")
+            )
+        }
+    }
+    if (expanded) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 2.px,
+                    style = LineStyle.Solid,
+                    color = Colors.LightGray
+                )
+                .borderRadius(r = 4.px)
+                .backgroundColor(Theme.LightGray.rgb),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Category.entries.forEach {
+                DropdownItem(it.name) { onCategorySelect(it) }
+            }
+        }
+    }
+}
+
+@Composable
+fun DropdownItem(text: String, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.px)
+            .cursor(Cursor.Pointer)
+            .onClick { onClick() },
+        contentAlignment = Alignment.CenterStart
+    ) {
+        SpanText(
+            text = text,
+            modifier = Modifier
+                .fontFamily(Constants.FONT_FAMILY)
+                .fontSize(16.px)
+                .color(Colors.Black)
+        )
     }
 }
