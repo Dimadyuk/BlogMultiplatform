@@ -43,4 +43,6 @@ object Id{
     const val svgParent = "svgParent"
     const val vectorIcon = "vectorIcon"
     const val navigationText = "navigationText"
+    const val editor = "editor"
+    const val editorPreview = "editorPreview"
 }
