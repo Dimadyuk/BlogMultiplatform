@@ -6,14 +6,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.example.blogmultiplatform.Constants.FONT_FAMILY
+import com.example.blogmultiplatform.Id
+import com.example.blogmultiplatform.Res
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.models.User
 import com.example.blogmultiplatform.models.UserWithoutPassword
 import com.example.blogmultiplatform.navigation.Screen
 import com.example.blogmultiplatform.styles.LoginInputStyle
-import com.example.blogmultiplatform.utils.Constants.FONT_FAMILY
-import com.example.blogmultiplatform.utils.Id
-import com.example.blogmultiplatform.utils.Res
 import com.example.blogmultiplatform.utils.checkUserExistence
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight

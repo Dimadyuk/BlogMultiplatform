@@ -1,6 +1,7 @@
-package com.example.blogmultiplatform.utils
+package com.example.blogmultiplatform
 
 object Constants {
+    const val DATABASE_NAME = "my_blog"
     const val FONT_FAMILY = "Roboto"
     const val SIDE_PANEL_WIDTH = 250
     const val PAGE_WIDTH = 1920
@@ -13,6 +14,16 @@ object Res {
     object Image {
         const val LOGO = "/logo.svg"
         const val LAUGH = "/laugh.png"
+    }
+    object Icon {
+        const val bold = "/bold.svg"
+        const val italic = "/italic.svg"
+        const val link = "/link.svg"
+        const val title = "/title.svg"
+        const val subtitle = "/subtitle.svg"
+        const val quote = "/quote.svg"
+        const val code = "/code.svg"
+        const val image = "/image.svg"
     }
     object PathIcon {
         const val home =

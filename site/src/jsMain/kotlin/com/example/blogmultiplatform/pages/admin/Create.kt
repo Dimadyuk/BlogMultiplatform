@@ -5,14 +5,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.blogmultiplatform.Constants
+import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.components.AdminPageLayout
 import com.example.blogmultiplatform.models.Category
+import com.example.blogmultiplatform.models.EditorKey
 import com.example.blogmultiplatform.models.Theme
-import com.example.blogmultiplatform.utils.Constants
-import com.example.blogmultiplatform.utils.Constants.SIDE_PANEL_WIDTH
+import com.example.blogmultiplatform.styles.EditorKeyStyle
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.css.Cursor
+import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -32,6 +35,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
 import com.varabyte.kobweb.compose.ui.modifiers.fontSize
+import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
@@ -44,10 +48,12 @@ import com.varabyte.kobweb.silk.components.forms.Button
 import com.varabyte.kobweb.silk.components.forms.Input
 import com.varabyte.kobweb.silk.components.forms.Switch
 import com.varabyte.kobweb.silk.components.forms.SwitchSize
+import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
+import com.varabyte.kobweb.silk.style.toModifier
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.browser.document
 import org.jetbrains.compose.web.attributes.InputType
@@ -281,6 +287,9 @@ fun CreateScreen() {
                         fileName = it
                     }
                 )
+                EditorControls(
+                    breakpoint = breakpoint
+                )
             }
         }
     }
@@ -444,5 +453,90 @@ fun ThumbnailUploader(
                 text = "Upload"
             )
         }
+    }
+}
+
+@Composable
+fun EditorControls(
+    modifier: Modifier = Modifier,
+    breakpoint: Breakpoint
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
+    ) {
+        SimpleGrid(
+            modifier = Modifier.fillMaxWidth(),
+            numColumns = numColumns(base = 1, sm = 2)
+        ) {
+            Row(
+                modifier = Modifier
+                    .backgroundColor(Theme.LightGray.rgb)
+                    .borderRadius(r = 4.px)
+                    .height(54.px),
+            ) {
+                EditorKey.entries.forEach {
+                    EditorKeyView(it)
+                }
+            }
+            Box(
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Button(
+                    modifier = Modifier
+                        .height(54.px)
+                        .thenIf(
+                            condition = breakpoint < Breakpoint.SM,
+                            other = Modifier.fillMaxWidth()
+                        )
+                        .margin(topBottom = if (breakpoint < Breakpoint.SM) 10.px else 0.px)
+                        .padding(leftRight = 24.px)
+                        .borderRadius(r = 4.px)
+                        .backgroundColor(Theme.LightGray.rgb)
+                        .color(Colors.DarkGray)
+                        .border(
+                            width = 0.px,
+                            style = LineStyle.None,
+                            color = Colors.Transparent
+                        )
+                        .outline(
+                            width = 0.px,
+                            style = LineStyle.None,
+                            color = Colors.Transparent
+                        ),
+                    onClick = {
+
+                    }
+                ) {
+                    SpanText(
+                        modifier = Modifier
+                            .fontFamily(Constants.FONT_FAMILY)
+                            .fontWeight(FontWeight.Medium)
+                            .fontSize(14.px),
+                        text = "Preview"
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EditorKeyView(key: EditorKey) {
+
+    Box(
+        modifier = EditorKeyStyle.toModifier()
+            .fillMaxHeight()
+            .padding(leftRight = 12.px)
+            .borderRadius(r = 4.px)
+            .cursor(Cursor.Pointer)
+            .onClick { },
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            src = key.icon,
+            description = key.name,
+        )
     }
 }

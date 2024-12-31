@@ -1,7 +1,7 @@
 package com.example.blogmultiplatform.data
 
+import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.models.User
-import com.example.blogmultiplatform.utils.Constants.DATABASE_NAME
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
 import com.mongodb.kotlin.client.coroutine.MongoClient
@@ -18,7 +18,7 @@ fun initMongoDB(context: InitApiContext) {
 class MongoDB(val context: InitApiContext) : MongoRepository {
     private val uri = "mongodb://localhost:27017/"
     private val client = MongoClient.create(uri)
-    private val database = client.getDatabase(DATABASE_NAME)
+    private val database = client.getDatabase(Constants.DATABASE_NAME)
     private val userCollection = database.getCollection<User>("user")
 
     override suspend fun checkUserExistence(user: User): User? {

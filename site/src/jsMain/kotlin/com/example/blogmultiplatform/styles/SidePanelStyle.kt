@@ -1,7 +1,7 @@
 package com.example.blogmultiplatform.styles
 
+import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.models.Theme
-import com.example.blogmultiplatform.utils.Id
 import com.varabyte.kobweb.compose.css.Transition
 import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.ui.Modifier

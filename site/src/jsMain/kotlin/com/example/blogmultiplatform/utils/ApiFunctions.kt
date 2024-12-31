@@ -1,9 +1,9 @@
 package com.example.blogmultiplatform.utils
 
+import com.example.blogmultiplatform.Constants.HUMOR_API_URL
 import com.example.blogmultiplatform.models.RandomJoke
 import com.example.blogmultiplatform.models.User
 import com.example.blogmultiplatform.models.UserWithoutPassword
-import com.example.blogmultiplatform.utils.Constants.HUMOR_API_URL
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.browser.http.http
 import kotlinx.browser.localStorage
