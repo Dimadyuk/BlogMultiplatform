@@ -14,6 +14,7 @@ import com.example.blogmultiplatform.models.EditorKey
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.styles.EditorKeyStyle
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
+import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
@@ -47,7 +48,6 @@ import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
-import com.varabyte.kobweb.compose.ui.modifiers.outline
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.resize
@@ -74,6 +74,19 @@ import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.TextArea
 
+data class CreatePageUiEvent(
+    val id: String = "",
+    val title: String = "",
+    val subtitle: String = "",
+    val thumbnail: String = "",
+    val thumbnailInputSwitch: Boolean = true,
+    val content: String = "",
+    val category: Category = Category.Programming,
+    val main: Boolean = false,
+    val popular: Boolean = false,
+    val sponsored: Boolean = false,
+    val editorVisibility: Boolean = true,
+)
 @Page
 @Composable
 fun CreatePage() {
@@ -86,16 +99,9 @@ fun CreatePage() {
 fun CreateScreen() {
     val breakpoint = rememberBreakpoint()
 
-    var popularSwitch by remember { mutableStateOf(false) }
-    var mainSwitch by remember { mutableStateOf(false) }
-    var sponsoredSwitch by remember { mutableStateOf(false) }
-    var thumbnailInputSwitch by remember { mutableStateOf(false) }
-
-    var title by remember { mutableStateOf("") }
-    var subtitle by remember { mutableStateOf("") }
-    var fileName by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf(Category.Programming) }
-    var editorVisibility by remember { mutableStateOf(true) }
+    var uiEvent by remember {
+        mutableStateOf(CreatePageUiEvent())
+    }
 
     AdminPageLayout {
         Box(
@@ -130,9 +136,9 @@ fun CreateScreen() {
                                 .margin(
                                     right = 8.px
                                 ),
-                            checked = popularSwitch,
+                            checked = uiEvent.popular,
                             onCheckedChange = {
-                                popularSwitch = it
+                                uiEvent = uiEvent.copy(popular = it)
                             },
                             size = SwitchSize.LG
                         )
@@ -157,9 +163,9 @@ fun CreateScreen() {
                                 .margin(
                                     right = 8.px
                                 ),
-                            checked = mainSwitch,
+                            checked = uiEvent.main,
                             onCheckedChange = {
-                                mainSwitch = it
+                                uiEvent = uiEvent.copy(main = it)
                             },
                             size = SwitchSize.LG
                         )
@@ -179,9 +185,9 @@ fun CreateScreen() {
                                 .margin(
                                     right = 8.px
                                 ),
-                            checked = sponsoredSwitch,
+                            checked = uiEvent.sponsored,
                             onCheckedChange = {
-                                sponsoredSwitch = it
+                                uiEvent = uiEvent.copy(sponsored = it)
                             },
                             size = SwitchSize.LG
                         )
@@ -204,22 +210,13 @@ fun CreateScreen() {
                         .backgroundColor(Theme.LightGray.rgb)
                         .color(Colors.Black)
                         .borderRadius(r = 4.px)
-                        .border(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        )
-                        .outline(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        )
+                        .noBorder()
                         .fontFamily(Constants.FONT_FAMILY)
                         .fontSize(16.px),
                     placeholder = "Title",
-                    value = title,
+                    value = uiEvent.title,
                     onValueChange = {
-                        title = it
+                        uiEvent = uiEvent.copy(title = it)
                     },
                 )
                 Input(
@@ -233,31 +230,22 @@ fun CreateScreen() {
                         .backgroundColor(Theme.LightGray.rgb)
                         .color(Colors.Black)
                         .borderRadius(r = 4.px)
-                        .border(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        )
-                        .outline(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        )
+                        .noBorder()
                         .fontFamily(Constants.FONT_FAMILY)
                         .fontSize(16.px),
                     placeholder = "Subtitle",
-                    value = subtitle,
+                    value = uiEvent.subtitle,
                     onValueChange = {
-                        subtitle = it
+                        uiEvent = uiEvent.copy(subtitle = it)
                     },
                 )
                 var expanded by remember { mutableStateOf(false) }
 
                 DropdownMenu(
-                    selectedCategory = selectedCategory,
+                    selectedCategory = uiEvent.category,
                     onCategorySelect = {
                         expanded = false
-                        selectedCategory = it
+                        uiEvent = uiEvent.copy(category = it)
                     },
                     onCategoryClick = {
                         expanded = !expanded
@@ -276,9 +264,9 @@ fun CreateScreen() {
                             .margin(
                                 right = 8.px
                             ),
-                        checked = thumbnailInputSwitch,
+                        checked = uiEvent.thumbnailInputSwitch,
                         onCheckedChange = {
-                            thumbnailInputSwitch = it
+                            uiEvent = uiEvent.copy(thumbnailInputSwitch = it)
                         },
                         size = SwitchSize.MD
                     )
@@ -291,51 +279,27 @@ fun CreateScreen() {
                     )
                 }
                 ThumbnailUploader(
-                    thumbnail = fileName,
-                    thumbnailInputEnabled = !thumbnailInputSwitch,
+                    thumbnail = uiEvent.thumbnail,
+                    thumbnailInputEnabled = !uiEvent.thumbnailInputSwitch,
                     onThumbnailSelect = { filename, file ->
-                        fileName = filename
+                        uiEvent = uiEvent.copy(thumbnail = filename)
                         println("Selected thumbnail: $filename")
                         println("Selected file: $file")
                     },
                     onValueChanged = {
-                        fileName = it
+                        uiEvent = uiEvent.copy(thumbnail = it)
                     }
                 )
                 EditorControls(
                     breakpoint = breakpoint,
-                    editorVisibility = editorVisibility,
+                    editorVisibility = uiEvent.editorVisibility,
                     onEditorVisibilityChange = {
-                        editorVisibility = !editorVisibility
+                        uiEvent = uiEvent.copy(editorVisibility = !uiEvent.editorVisibility)
                     }
                 )
-                Editor(editorVisibility = editorVisibility)
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(54.px)
-                        .margin(top = 24.px)
-                        .backgroundColor(Theme.Primary.rgb)
-                        .color(Colors.White)
-                        .borderRadius(r = 4.px)
-                        .border(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        )
-                        .outline(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        )
-                        .fontFamily(Constants.FONT_FAMILY)
-                        .fontSize(16.px),
-                    onClick = {
+                Editor(editorVisibility = uiEvent.editorVisibility)
 
-                    }
-                ) {
-                    SpanText(text = "Create")
-                }
+                CreateButton {}
             }
         }
     }
@@ -443,16 +407,7 @@ fun ThumbnailUploader(
                 .backgroundColor(Theme.LightGray.rgb)
                 .color(Colors.Black)
                 .borderRadius(r = 4.px)
-                .border(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
-                .outline(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
+                .noBorder()
                 .fontFamily(Constants.FONT_FAMILY)
                 .fontSize(16.px)
                 .thenIf(
@@ -471,16 +426,7 @@ fun ThumbnailUploader(
                 .padding(leftRight = 24.px)
                 .backgroundColor(if (thumbnailInputEnabled) Theme.Primary.rgb else Theme.LightGray.rgb)
                 .color(if (thumbnailInputEnabled) Colors.White else Theme.HalfBlack.rgb)
-                .border(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
-                .outline(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
+                .noBorder()
                 .borderRadius(r = 4.px)
                 .thenIf(
                     condition = !thumbnailInputEnabled,
@@ -549,16 +495,7 @@ fun EditorControls(
                             if (editorVisibility) Colors.DarkGray
                             else Colors.White
                         )
-                        .border(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        )
-                        .outline(
-                            width = 0.px,
-                            style = LineStyle.None,
-                            color = Colors.Transparent
-                        ),
+                        .noBorder(),
                     onClick = {
                         onEditorVisibilityChange()
                     }
@@ -613,16 +550,7 @@ fun Editor(editorVisibility: Boolean) {
                 .padding(all = 20.px)
                 .backgroundColor(Theme.LightGray.rgb)
                 .borderRadius(r = 4.px)
-                .border(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
-                .outline(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
+                .noBorder()
                 .fontFamily(Constants.FONT_FAMILY)
                 .fontSize(16.px)
                 .visibility(if (editorVisibility) Visibility.Visible else Visibility.Hidden)
@@ -641,16 +569,7 @@ fun Editor(editorVisibility: Boolean) {
                 .padding(all = 20.px)
                 .backgroundColor(Theme.LightGray.rgb)
                 .borderRadius(r = 4.px)
-                .border(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
-                .outline(
-                    width = 0.px,
-                    style = LineStyle.None,
-                    color = Colors.Transparent
-                )
+                .noBorder()
                 .visibility(if (editorVisibility) Visibility.Hidden else Visibility.Visible)
                 .overflow(Overflow.Auto)
                 .scrollBehavior(ScrollBehavior.Smooth)
@@ -658,5 +577,24 @@ fun Editor(editorVisibility: Boolean) {
         ) {
 
         }
+    }
+}
+
+@Composable
+fun CreateButton(onClick: () -> Unit) {
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(54.px)
+            .margin(top = 24.px)
+            .backgroundColor(Theme.Primary.rgb)
+            .color(Colors.White)
+            .borderRadius(r = 4.px)
+            .noBorder()
+            .fontFamily(Constants.FONT_FAMILY)
+            .fontSize(16.px),
+        onClick = { onClick }
+    ) {
+        SpanText(text = "Create")
     }
 }
