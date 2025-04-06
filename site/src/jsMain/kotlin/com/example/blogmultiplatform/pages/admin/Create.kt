@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
@@ -11,9 +12,11 @@ import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.components.AdminPageLayout
 import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.EditorKey
+import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.styles.EditorKeyStyle
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
+import com.example.blogmultiplatform.utils.addPost
 import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.css.Cursor
@@ -68,11 +71,16 @@ import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.style.toModifier
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.browser.document
+import kotlinx.browser.localStorage
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.TextArea
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLTextAreaElement
+import kotlin.js.Date
 
 data class CreatePageUiEvent(
     val id: String = "",
@@ -102,6 +110,7 @@ fun CreateScreen() {
     var uiEvent by remember {
         mutableStateOf(CreatePageUiEvent())
     }
+    val scope = rememberCoroutineScope()
 
     AdminPageLayout {
         Box(
@@ -203,6 +212,7 @@ fun CreateScreen() {
                 Input(
                     type = InputType.Text,
                     modifier = Modifier
+                        .id(Id.titleInput)
                         .fillMaxWidth()
                         .height(54.px)
                         .margin(topBottom = 12.px)
@@ -223,6 +233,7 @@ fun CreateScreen() {
                     type = InputType.Text,
                     focusBorderColor = Theme.Primary.rgb,
                     modifier = Modifier
+                        .id(Id.subtitleInput)
                         .fillMaxWidth()
                         .height(54.px)
                         .margin(bottom = 12.px)
@@ -282,9 +293,11 @@ fun CreateScreen() {
                     thumbnail = uiEvent.thumbnail,
                     thumbnailInputEnabled = !uiEvent.thumbnailInputSwitch,
                     onThumbnailSelect = { filename, file ->
+                        (document
+                            .getElementById(Id.thumbnailInput) as HTMLInputElement)
+                            .value = filename
+
                         uiEvent = uiEvent.copy(thumbnail = filename)
-                        println("Selected thumbnail: $filename")
-                        println("Selected file: $file")
                     },
                     onValueChanged = {
                         uiEvent = uiEvent.copy(thumbnail = it)
@@ -299,7 +312,58 @@ fun CreateScreen() {
                 )
                 Editor(editorVisibility = uiEvent.editorVisibility)
 
-                CreateButton {}
+                CreateButton(
+                    onClick = {
+                        uiEvent = uiEvent.copy(
+                            title = (document
+                                .getElementById(Id.titleInput) as HTMLInputElement)
+                                .value,
+                            subtitle = (document
+                                .getElementById(Id.subtitleInput) as HTMLInputElement)
+                                .value,
+                            content = (document
+                                .getElementById(Id.editor) as HTMLTextAreaElement)
+                                .value,
+                        )
+                        if (!uiEvent.thumbnailInputSwitch) {
+                            uiEvent = uiEvent.copy(
+                                thumbnail = (document
+                                    .getElementById(Id.thumbnailInput) as HTMLInputElement)
+                                    .value,
+                            )
+                        }
+
+
+                        if (uiEvent.title.isNotBlank() &&
+                            uiEvent.subtitle.isNotBlank() &&
+                            uiEvent.thumbnail.isNotBlank() &&
+                            uiEvent.content.isNotBlank()
+                        ) {
+                            scope.launch {
+                                val result = addPost(
+                                    Post(
+                                        author = localStorage.getItem("username").toString(),
+                                        date = Date.now().toLong(),
+                                        title = uiEvent.title,
+                                        subtitle = uiEvent.subtitle,
+                                        thambnail = uiEvent.thumbnail,
+                                        content = uiEvent.content,
+                                        category = uiEvent.category,
+                                        popular = uiEvent.popular,
+                                        main = uiEvent.main,
+                                        sponsored = uiEvent.sponsored
+                                    )
+                                )
+                                if (result) {
+                                    uiEvent = CreatePageUiEvent()
+                                    println("Success")
+                                }
+                            }
+                        } else {
+                            println("Please fill all the fields")
+                        }
+                    }
+                )
             }
         }
     }
@@ -399,6 +463,7 @@ fun ThumbnailUploader(
         Input(
             type = InputType.Text,
             modifier = Modifier
+                .id(Id.thumbnailInput)
                 .fillMaxWidth()
                 .height(54.px)
                 .margin(topBottom = 12.px)
@@ -593,7 +658,7 @@ fun CreateButton(onClick: () -> Unit) {
             .noBorder()
             .fontFamily(Constants.FONT_FAMILY)
             .fontSize(16.px),
-        onClick = { onClick }
+        onClick = { onClick.invoke() }
     ) {
         SpanText(text = "Create")
     }

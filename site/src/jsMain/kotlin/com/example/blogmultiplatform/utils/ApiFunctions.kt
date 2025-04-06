@@ -1,6 +1,7 @@
 package com.example.blogmultiplatform.utils
 
 import com.example.blogmultiplatform.Constants.HUMOR_API_URL
+import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.RandomJoke
 import com.example.blogmultiplatform.models.User
 import com.example.blogmultiplatform.models.UserWithoutPassword
@@ -13,7 +14,6 @@ import kotlinx.serialization.json.Json
 import org.w3c.dom.get
 import org.w3c.dom.set
 import kotlin.js.Date
-import kotlin.text.toDouble
 
 
 suspend fun checkUserExistence(user: User): UserWithoutPassword? {
@@ -97,5 +97,19 @@ suspend fun fetchRandomJoke(
             println("Error: $e")
         }
         localStorage["date"] = Date.now().toString()
+    }
+}
+
+suspend fun addPost(post: Post): Boolean {
+    return try {
+        window.api.tryPost(
+            apiPath = "addpost",
+            body = Json.encodeToString(post).encodeToByteArray()
+        )?.decodeToString()?.let {
+            Json.decodeFromString<Boolean>(it)
+        } ?: false
+    } catch (e: Exception) {
+        println(e.message)
+        false
     }
 }
