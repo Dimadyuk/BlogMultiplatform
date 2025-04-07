@@ -1,8 +1,9 @@
 package com.example.blogmultiplatform.navigation
 
 sealed class Screen(val route: String) {
-    object AdminHome : Screen(route = "/admin/")
-    object AdminLogin : Screen(route = "/admin/login")
-    object AdminCreate : Screen(route = "/admin/create")
-    object AdminMyPosts : Screen(route = "/admin/myposts")
+    data object AdminHome : Screen(route = "/admin/")
+    data object AdminLogin : Screen(route = "/admin/login")
+    data object AdminCreate : Screen(route = "/admin/create")
+    data object AdminMyPosts : Screen(route = "/admin/myposts")
+    data object AdminSuccess : Screen(route = "/admin/success")
 }
