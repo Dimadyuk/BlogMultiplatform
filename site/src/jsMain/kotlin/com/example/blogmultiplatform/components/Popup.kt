@@ -3,6 +3,7 @@ package com.example.blogmultiplatform.components
 import androidx.compose.runtime.Composable
 import com.example.blogmultiplatform.Constants.FONT_FAMILY
 import com.example.blogmultiplatform.Id
+import com.example.blogmultiplatform.models.EditorControl
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.compose.css.TextAlign
@@ -79,7 +80,8 @@ fun MessagePopup(
 
 @Composable
 fun LinkPopup(
-    onLinkAdded: (String, String) -> Unit,
+    editorControl: EditorControl,
+    onAddClick: (String, String) -> Unit,
     onDismiss: () -> Unit,
 ) {
     Box(
@@ -117,7 +119,10 @@ fun LinkPopup(
                     .borderRadius(r = 4.px)
                     .backgroundColor(Theme.LightGray.rgb)
                     .toAttrs {
-                        attr("placeholder", "Href")
+                        attr(
+                            "placeholder",
+                            if (editorControl == EditorControl.Link) "Href" else "Image Url"
+                        )
                     }
             )
             Input(
@@ -134,7 +139,10 @@ fun LinkPopup(
                     .borderRadius(r = 4.px)
                     .backgroundColor(Theme.LightGray.rgb)
                     .toAttrs {
-                        attr("placeholder", "Title")
+                        attr(
+                            "placeholder",
+                            if (editorControl == EditorControl.Link) "Title" else "Description"
+                        )
                     }
             )
             Button(
@@ -145,7 +153,7 @@ fun LinkPopup(
                         val title =
                             (document.getElementById(Id.linkTitleInput) as HTMLInputElement).value
 
-                        onLinkAdded(href, title)
+                        onAddClick(href, title)
                         onDismiss()
                     }
                     .fillMaxWidth()

@@ -106,6 +106,7 @@ data class CreatePageUiState(
     val editorVisibility: Boolean = true,
     val messagePopup: Boolean = false,
     val linkPopup: Boolean = false,
+    val imagePopup: Boolean = false,
 )
 @Page
 @Composable
@@ -324,7 +325,10 @@ fun CreateScreen() {
                     },
                     onLinkClick = {
                         uiState = uiState.copy(linkPopup = true)
-                    }
+                    },
+                    onImageClick = {
+                        uiState = uiState.copy(imagePopup = true)
+                    },
                 )
                 Editor(editorVisibility = uiState.editorVisibility)
 
@@ -399,7 +403,7 @@ fun CreateScreen() {
     if (uiState.linkPopup) {
         LinkPopup(
             onDismiss = { uiState = uiState.copy(linkPopup = false) },
-            onLinkAdded = { href, title ->
+            onAddClick = { href, title ->
                 applyStyle(
                     ControlStyle.Link(
                         selectedText = getSelectedText(),
@@ -407,7 +411,23 @@ fun CreateScreen() {
                         title = title
                     )
                 )
-            }
+            },
+            editorControl = EditorControl.Link,
+        )
+    }
+    if (uiState.imagePopup) {
+        LinkPopup(
+            onDismiss = { uiState = uiState.copy(imagePopup = false) },
+            onAddClick = { imageUrl, description ->
+                applyStyle(
+                    ControlStyle.Image(
+                        selectedText = getSelectedText(),
+                        imageUrl = imageUrl,
+                        desc = description,
+                    )
+                )
+            },
+            editorControl = EditorControl.Image,
         )
     }
 }
@@ -563,6 +583,7 @@ fun EditorControls(
     editorVisibility: Boolean,
     onEditorVisibilityChange: () -> Unit,
     onLinkClick: () -> Unit,
+    onImageClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -585,7 +606,8 @@ fun EditorControls(
                         onClick = {
                             applyControlStyle(
                                 editorControl = it,
-                                onLinkClick = onLinkClick
+                                onLinkClick = onLinkClick,
+                                onImageClick = onImageClick,
                             )
                         }
                     )
