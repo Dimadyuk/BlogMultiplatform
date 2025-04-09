@@ -10,8 +10,10 @@ import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.components.AdminPageLayout
+import com.example.blogmultiplatform.components.LinkPopup
 import com.example.blogmultiplatform.components.MessagePopup
 import com.example.blogmultiplatform.models.Category
+import com.example.blogmultiplatform.models.ControlStyle
 import com.example.blogmultiplatform.models.EditorControl
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.Theme
@@ -20,6 +22,8 @@ import com.example.blogmultiplatform.styles.EditorKeyStyle
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
 import com.example.blogmultiplatform.utils.addPost
 import com.example.blogmultiplatform.utils.applyControlStyle
+import com.example.blogmultiplatform.utils.applyStyle
+import com.example.blogmultiplatform.utils.getSelectedText
 import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.css.Cursor
@@ -101,6 +105,7 @@ data class CreatePageUiState(
     val sponsored: Boolean = false,
     val editorVisibility: Boolean = true,
     val messagePopup: Boolean = false,
+    val linkPopup: Boolean = false,
 )
 @Page
 @Composable
@@ -316,6 +321,9 @@ fun CreateScreen() {
                     editorVisibility = uiState.editorVisibility,
                     onEditorVisibilityChange = {
                         uiState = uiState.copy(editorVisibility = !uiState.editorVisibility)
+                    },
+                    onLinkClick = {
+                        uiState = uiState.copy(linkPopup = true)
                     }
                 )
                 Editor(editorVisibility = uiState.editorVisibility)
@@ -386,6 +394,20 @@ fun CreateScreen() {
         MessagePopup(
             message = "Please fill all the fields",
             onDismiss = { uiState = uiState.copy(messagePopup = false) }
+        )
+    }
+    if (uiState.linkPopup) {
+        LinkPopup(
+            onDismiss = { uiState = uiState.copy(linkPopup = false) },
+            onLinkAdded = { href, title ->
+                applyStyle(
+                    ControlStyle.Link(
+                        selectedText = getSelectedText(),
+                        href = href,
+                        title = title
+                    )
+                )
+            }
         )
     }
 }
@@ -539,7 +561,8 @@ fun EditorControls(
     modifier: Modifier = Modifier,
     breakpoint: Breakpoint,
     editorVisibility: Boolean,
-    onEditorVisibilityChange: () -> Unit
+    onEditorVisibilityChange: () -> Unit,
+    onLinkClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -560,7 +583,10 @@ fun EditorControls(
                     EditorControlView(
                         control = it,
                         onClick = {
-                            applyControlStyle(it)
+                            applyControlStyle(
+                                editorControl = it,
+                                onLinkClick = onLinkClick
+                            )
                         }
                     )
                 }

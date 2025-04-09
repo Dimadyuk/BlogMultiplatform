@@ -97,7 +97,10 @@ fun applyStyle(controlStyle: ControlStyle) {
     }
 }
 
-fun applyControlStyle(editorControl: EditorControl) {
+fun applyControlStyle(
+    editorControl: EditorControl,
+    onLinkClick: () -> Unit,
+) {
     when (editorControl) {
         EditorControl.Bold -> {
             applyStyle(
@@ -116,7 +119,7 @@ fun applyControlStyle(editorControl: EditorControl) {
         }
 
         EditorControl.Link -> {
-
+            onLinkClick()
         }
 
         EditorControl.Title -> {
