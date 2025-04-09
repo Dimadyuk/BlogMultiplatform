@@ -12,13 +12,14 @@ import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.components.AdminPageLayout
 import com.example.blogmultiplatform.components.MessagePopup
 import com.example.blogmultiplatform.models.Category
-import com.example.blogmultiplatform.models.EditorKey
+import com.example.blogmultiplatform.models.EditorControl
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.navigation.Screen
 import com.example.blogmultiplatform.styles.EditorKeyStyle
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
 import com.example.blogmultiplatform.utils.addPost
+import com.example.blogmultiplatform.utils.applyControlStyle
 import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.css.Cursor
@@ -78,6 +79,7 @@ import kotlinx.browser.localStorage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
@@ -554,8 +556,13 @@ fun EditorControls(
                     .borderRadius(r = 4.px)
                     .height(54.px),
             ) {
-                EditorKey.entries.forEach {
-                    EditorKeyView(it)
+                EditorControl.entries.forEach {
+                    EditorControlView(
+                        control = it,
+                        onClick = {
+                            applyControlStyle(it)
+                        }
+                    )
                 }
             }
             Box(
@@ -598,20 +605,22 @@ fun EditorControls(
 }
 
 @Composable
-fun EditorKeyView(key: EditorKey) {
-
+fun EditorControlView(
+    control: EditorControl,
+    onClick: () -> Unit,
+) {
     Box(
         modifier = EditorKeyStyle.toModifier()
             .fillMaxHeight()
             .padding(leftRight = 12.px)
             .borderRadius(r = 4.px)
             .cursor(Cursor.Pointer)
-            .onClick { },
+            .onClick { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Image(
-            src = key.icon,
-            description = key.name,
+            src = control.icon,
+            description = control.name,
         )
     }
 }
@@ -652,15 +661,14 @@ fun Editor(editorVisibility: Boolean) {
                 .margin(top = 8.px)
                 .padding(all = 20.px)
                 .backgroundColor(Theme.LightGray.rgb)
+                .color(Color.black)
                 .borderRadius(r = 4.px)
                 .noBorder()
                 .visibility(if (editorVisibility) Visibility.Hidden else Visibility.Visible)
                 .overflow(Overflow.Auto)
                 .scrollBehavior(ScrollBehavior.Smooth)
                 .toAttrs()
-        ) {
-
-        }
+        )
     }
 }
 
