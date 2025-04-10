@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.compose.css.Transition
+import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
@@ -53,7 +54,7 @@ fun SearchBar(
             )
             .transition(
                 Transition.of(
-                    property = "border",
+                    property = TransitionProperty.All,
                     duration = 200.ms,
                 )
             ),
@@ -61,7 +62,7 @@ fun SearchBar(
     ) {
         FaMagnifyingGlass(
             modifier = Modifier
-                .color(Theme.Grey.rgb)
+                .color(if (focused) Theme.Primary.rgb else Theme.Grey.rgb)
                 .margin(right = 15.px),
             size = IconSize.SM,
         )
