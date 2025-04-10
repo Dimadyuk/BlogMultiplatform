@@ -18,6 +18,13 @@ kobweb {
         index {
             description.set("Powered by Kobweb")
             head.add {
+                script {
+                    src = "/highlight.min.js"
+                }
+                link {
+                    rel = "stylesheet"
+                    href = "/github-dark.css"
+                }
                 link {
                     href = "https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
                     rel = "stylesheet"

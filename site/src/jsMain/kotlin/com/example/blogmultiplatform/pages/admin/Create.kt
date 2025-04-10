@@ -637,6 +637,7 @@ fun EditorControls(
                         .noBorder(),
                     onClick = {
                         onEditorVisibilityChange()
+                        js("hljs.highlightAll()") as Unit
                     }
                 ) {
                     SpanText(
