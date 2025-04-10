@@ -1,16 +1,22 @@
 package com.example.blogmultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants.FONT_FAMILY
 import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.components.AdminPageLayout
+import com.example.blogmultiplatform.components.Posts
 import com.example.blogmultiplatform.components.SearchBar
+import com.example.blogmultiplatform.models.ApiListResponse
+import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
+import com.example.blogmultiplatform.utils.fetchMyPosts
 import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
@@ -56,6 +62,21 @@ fun MyPostsScreen() {
     val breakpoint = rememberBreakpoint()
     var selectable by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("Select") }
+    val myPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+
+    LaunchedEffect(Unit) {
+        fetchMyPosts(
+            skip = 0,
+            onSuccess = {
+                if (it is ApiListResponse.Success) {
+                    myPosts.addAll(it.data)
+                }
+            },
+            onError = {
+                println(it)
+            }
+        )
+    }
 
     AdminPageLayout {
         Column(
@@ -119,7 +140,7 @@ fun MyPostsScreen() {
                     SpanText(text = "Delete")
                 }
             }
-
+            Posts(posts = myPosts)
         }
     }
 }

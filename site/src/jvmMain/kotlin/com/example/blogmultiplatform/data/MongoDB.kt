@@ -59,8 +59,7 @@ class MongoDB(val context: InitApiContext) : MongoRepository {
     }
 
     override suspend fun readMyPosts(skip: Int, author: String): List<PostWithoutDetails> {
-        return try {
-            postCollection.withDocumentClass(PostWithoutDetails::class.java)
+        return postCollection.withDocumentClass(PostWithoutDetails::class.java)
                 .find(
                     Filters.eq(
                         PostWithoutDetails::author.name, author
@@ -70,9 +69,5 @@ class MongoDB(val context: InitApiContext) : MongoRepository {
                 .skip(skip)
                 .limit(POSTS_PER_PAGE)
                 .toList()
-        } catch (e: Exception) {
-            context.logger.error(e.message.toString())
-            emptyList()
-        }
     }
 }
