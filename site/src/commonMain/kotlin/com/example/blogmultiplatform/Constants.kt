@@ -1,7 +1,6 @@
 package com.example.blogmultiplatform
 
 object Constants {
-    const val DATABASE_NAME = "my_blog"
     const val FONT_FAMILY = "Roboto"
     const val SIDE_PANEL_WIDTH = 250
     const val PAGE_WIDTH = 1920

@@ -1,15 +1,19 @@
 package com.example.blogmultiplatform.data
 
-import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.models.Post
+import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.models.User
+import com.example.blogmultiplatform.utils.Constants.DATABASE_NAME
+import com.example.blogmultiplatform.utils.Constants.POSTS_PER_PAGE
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
+import com.mongodb.client.model.Indexes.descending
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.toList
 
 @InitApi
 fun initMongoDB(context: InitApiContext) {
@@ -19,7 +23,7 @@ fun initMongoDB(context: InitApiContext) {
 class MongoDB(val context: InitApiContext) : MongoRepository {
     private val uri = "mongodb://localhost:27017/"
     private val client = MongoClient.create(uri)
-    private val database = client.getDatabase(Constants.DATABASE_NAME)
+    private val database = client.getDatabase(DATABASE_NAME)
     private val userCollection = database.getCollection<User>("user")
     private val postCollection = database.getCollection<Post>("post")
 
@@ -51,6 +55,24 @@ class MongoDB(val context: InitApiContext) : MongoRepository {
         } catch (e: Exception) {
             context.logger.error(e.message.toString())
             false
+        }
+    }
+
+    override suspend fun readMyPosts(skip: Int, author: String): List<PostWithoutDetails> {
+        return try {
+            postCollection.withDocumentClass(PostWithoutDetails::class.java)
+                .find(
+                    Filters.eq(
+                        PostWithoutDetails::author.name, author
+                    )
+                )
+                .sort(descending(PostWithoutDetails::date.name))
+                .skip(skip)
+                .limit(POSTS_PER_PAGE)
+                .toList()
+        } catch (e: Exception) {
+            context.logger.error(e.message.toString())
+            emptyList()
         }
     }
 }
