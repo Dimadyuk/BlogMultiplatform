@@ -23,6 +23,7 @@ import com.example.blogmultiplatform.utils.IsUserLoggedIn
 import com.example.blogmultiplatform.utils.addPost
 import com.example.blogmultiplatform.utils.applyControlStyle
 import com.example.blogmultiplatform.utils.applyStyle
+import com.example.blogmultiplatform.utils.getEditor
 import com.example.blogmultiplatform.utils.getSelectedText
 import com.example.blogmultiplatform.utils.noBorder
 import com.varabyte.kobweb.browser.file.loadDataUrlFromDisk
@@ -58,6 +59,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.onKeyDown
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.resize
@@ -637,6 +639,7 @@ fun EditorControls(
                         .noBorder(),
                     onClick = {
                         onEditorVisibilityChange()
+                        document.getElementById(Id.editorPreview)?.innerHTML = getEditor().value
                         js("hljs.highlightAll()") as Unit
                     }
                 ) {
@@ -696,6 +699,15 @@ fun Editor(editorVisibility: Boolean) {
                 .fontFamily(Constants.FONT_FAMILY)
                 .fontSize(16.px)
                 .visibility(if (editorVisibility) Visibility.Visible else Visibility.Hidden)
+                .onKeyDown {
+                    if (it.code == "Enter" && it.shiftKey) {
+                        applyStyle(
+                            ControlStyle.Break(
+                                selectedText = getSelectedText(),
+                            )
+                        )
+                    }
+                }
                 .toAttrs {
                     attr("placeholder", "Type here...")
                 }
