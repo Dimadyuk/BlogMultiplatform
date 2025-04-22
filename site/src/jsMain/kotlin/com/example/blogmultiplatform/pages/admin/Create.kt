@@ -99,7 +99,7 @@ data class CreatePageUiState(
     val title: String = "",
     val subtitle: String = "",
     val thumbnail: String = "",
-    val thumbnailInputSwitch: Boolean = false,
+    val thumbnailInputEnabled: Boolean = false,
     val content: String = "",
     val category: Category = Category.Programming,
     val main: Boolean = false,
@@ -291,9 +291,9 @@ fun CreateScreen() {
                             .margin(
                                 right = 8.px
                             ),
-                        checked = uiState.thumbnailInputSwitch,
+                        checked = uiState.thumbnailInputEnabled,
                         onCheckedChange = {
-                            uiState = uiState.copy(thumbnailInputSwitch = it)
+                            uiState = uiState.copy(thumbnailInputEnabled = it)
                         },
                         size = SwitchSize.MD
                     )
@@ -307,13 +307,15 @@ fun CreateScreen() {
                 }
                 ThumbnailUploader(
                     thumbnail = uiState.thumbnail,
-                    thumbnailInputEnabled = !uiState.thumbnailInputSwitch,
+                    thumbnailInputEnabled = !uiState.thumbnailInputEnabled,
                     onThumbnailSelect = { filename, file ->
                         (document
                             .getElementById(Id.thumbnailInput) as HTMLInputElement)
                             .value = filename
 
-                        uiState = uiState.copy(thumbnail = filename)
+                        uiState = uiState.copy(thumbnail = file)
+                        println("file - $file")
+                        println("filename -$filename")
                     },
                     onValueChanged = {
                         uiState = uiState.copy(thumbnail = it)
@@ -347,7 +349,9 @@ fun CreateScreen() {
                                 .getElementById(Id.editor) as HTMLTextAreaElement)
                                 .value,
                         )
-                        if (!uiState.thumbnailInputSwitch) {
+                        println("thumbnailInputEnabled = ${uiState.thumbnailInputEnabled}")
+
+                        if (!uiState.thumbnailInputEnabled) {
                             uiState = uiState.copy(
                                 thumbnail = (document
                                     .getElementById(Id.thumbnailInput) as HTMLInputElement)
@@ -362,6 +366,7 @@ fun CreateScreen() {
                             uiState.content.isNotBlank()
                         ) {
                             scope.launch {
+                                println("final thumbnail = ${uiState.thumbnail}")
                                 val result = addPost(
                                     Post(
                                         author = localStorage.getItem("username").toString(),

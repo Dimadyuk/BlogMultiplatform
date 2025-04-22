@@ -29,7 +29,7 @@ import org.jetbrains.compose.web.css.px
 fun SuccessPage() {
     val context = rememberPageContext()
     LaunchedEffect(Unit) {
-        delay(5000)
+        delay(2000)
         context.router.navigateTo(Screen.AdminCreate.route)
     }
 

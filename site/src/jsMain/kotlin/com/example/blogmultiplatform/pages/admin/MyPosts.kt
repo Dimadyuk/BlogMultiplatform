@@ -100,9 +100,9 @@ fun MyPostsScreen() {
             }
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(90.percent)
+                    .fillMaxWidth(if (breakpoint > Breakpoint.MD) 80.percent else 90.percent)
                     .margin(bottom = 24.px),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(
@@ -125,6 +125,7 @@ fun MyPostsScreen() {
 
                 Button(
                     attrs = Modifier
+                        .margin(right = 20.px)
                         .height(54.px)
                         .padding(leftRight = 24.px)
                         .backgroundColor(Theme.Red.rgb)
@@ -140,7 +141,10 @@ fun MyPostsScreen() {
                     SpanText(text = "Delete")
                 }
             }
-            Posts(posts = myPosts)
+            Posts(
+                breakpoint = breakpoint,
+                posts = myPosts
+            )
         }
     }
 }
