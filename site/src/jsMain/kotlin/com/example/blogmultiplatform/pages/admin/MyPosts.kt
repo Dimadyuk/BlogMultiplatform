@@ -20,6 +20,7 @@ import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
 import com.example.blogmultiplatform.utils.fetchMyPosts
 import com.example.blogmultiplatform.utils.noBorder
+import com.example.blogmultiplatform.utils.parseSwitchText
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -64,13 +65,14 @@ fun MyPostsPage() {
 fun MyPostsScreen() {
     val breakpoint = rememberBreakpoint()
     val myPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    val selectedPosts = remember { mutableStateListOf<String>() }
     val scope = rememberCoroutineScope()
 
     var postsToSkip by remember { mutableStateOf(0) }
     var showMoreVisibility by remember { mutableStateOf(false) }
 
     var selectable by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("Select") }
+    var switchText by remember { mutableStateOf("Select") }
 
 
     LaunchedEffect(Unit) {
@@ -126,12 +128,18 @@ fun MyPostsScreen() {
                         checked = selectable,
                         onCheckedChange = {
                             selectable = it
+                            if (!selectable) {
+                                selectedPosts.clear()
+                                switchText = "Select"
+                            } else {
+                                switchText = "0 Posts Selected"
+                            }
                         },
                     )
                     SpanText(
                         modifier = Modifier
                             .color(if (selectable) Colors.Black else Theme.HalfBlack.rgb),
-                        text = text,
+                        text = switchText,
                     )
                 }
 
@@ -180,7 +188,16 @@ fun MyPostsScreen() {
                         )
                     }
                 },
-                posts = myPosts
+                posts = myPosts,
+                selectable = selectable,
+                onSelect = {
+                    selectedPosts.add(it)
+                    switchText = parseSwitchText(selectedPosts.toList())
+                },
+                onDeselect = {
+                    selectedPosts.remove(it)
+                    switchText = parseSwitchText(selectedPosts.toList())
+                },
             )
         }
     }

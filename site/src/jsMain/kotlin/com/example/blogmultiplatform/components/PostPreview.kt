@@ -1,6 +1,10 @@
 package com.example.blogmultiplatform.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.models.Theme
@@ -11,12 +15,17 @@ import com.varabyte.kobweb.compose.css.ObjectFit
 import com.varabyte.kobweb.compose.css.Overflow
 import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.TextOverflow
+import com.varabyte.kobweb.compose.css.Transition
+import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
+import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.graphics.Colors
+import com.varabyte.kobweb.compose.ui.modifiers.border
+import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.cursor
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
@@ -27,27 +36,62 @@ import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.objectFit
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
+import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.size
 import com.varabyte.kobweb.compose.ui.modifiers.textAlign
 import com.varabyte.kobweb.compose.ui.modifiers.textOverflow
+import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
+import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
+import org.jetbrains.compose.web.css.LineStyle
+import org.jetbrains.compose.web.css.ms
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.dom.CheckboxInput
 
 @Composable
 fun PostPreview(
     post: PostWithoutDetails,
+    selectable: Boolean = false,
+    onSelect: (String) -> Unit,
+    onDeselect: (String) -> Unit,
 ) {
+    var checked by remember(selectable) { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth(95.percent)
             .margin(bottom = 24.px)
+            .padding(all = if (selectable) 10.px else 0.px)
+            .borderRadius(r = 4.px)
+            .border(
+                width = if (selectable) 4.px else 0.px,
+                style = if (selectable) LineStyle.Solid else LineStyle.None,
+                color = if (checked) Theme.Primary.rgb else Theme.Grey.rgb
+            )
             .cursor(Cursor.Pointer)
+            .transition(
+                Transition.of(
+                    property = TransitionProperty.All,
+                    duration = 200.ms,
+                )
+            )
+            .onClick {
+                if (selectable) {
+                    checked = !checked
+                    if (checked) {
+                        onSelect(post.id)
+                    } else {
+                        onDeselect(post.id)
+                    }
+                }
+            }
     ) {
         Image(
             modifier = Modifier
@@ -97,19 +141,37 @@ fun PostPreview(
                 },
             text = post.subtitle
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
         CategoryChip(
             category = post.category
         )
+            CheckboxInput(
+                checked = checked,
+                attrs = Modifier
+                    .visibility(if (selectable) Visibility.Visible else Visibility.Hidden)
+                    .size(20.px)
+                    .toAttrs()
+            )
+        }
     }
 }
 
 @Composable
 fun Posts(
     breakpoint: Breakpoint,
-    onShowMoreClicked: () -> Unit,
-    showMoreVisible: Boolean,
     posts: List<PostWithoutDetails>,
-) {
+    selectable: Boolean = false,
+    showMoreVisible: Boolean,
+    onShowMoreClicked: () -> Unit,
+    onSelect: (String) -> Unit,
+    onDeselect: (String) -> Unit,
+
+    ) {
     Column(
         modifier = Modifier
             .fillMaxWidth(if (breakpoint > Breakpoint.MD) 80.percent else 90.percent),
@@ -122,7 +184,12 @@ fun Posts(
             numColumns = numColumns(base = 1, sm = 2, md = 3, lg = 4),
         ) {
             posts.forEach {
-                PostPreview(post = it)
+                PostPreview(
+                    post = it,
+                    selectable = selectable,
+                    onSelect = onSelect,
+                    onDeselect = onDeselect,
+                )
             }
         }
 
