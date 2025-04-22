@@ -9,9 +9,12 @@ import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.css.ObjectFit
 import com.varabyte.kobweb.compose.css.Overflow
+import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.TextOverflow
+import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
+import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.color
@@ -22,8 +25,11 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.objectFit
+import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
+import com.varabyte.kobweb.compose.ui.modifiers.textAlign
 import com.varabyte.kobweb.compose.ui.modifiers.textOverflow
+import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
@@ -100,12 +106,15 @@ fun PostPreview(
 @Composable
 fun Posts(
     breakpoint: Breakpoint,
+    onShowMoreClicked: () -> Unit,
+    showMoreVisible: Boolean,
     posts: List<PostWithoutDetails>,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth(if (breakpoint > Breakpoint.MD) 80.percent else 90.percent),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SimpleGrid(
             modifier = Modifier
@@ -116,5 +125,21 @@ fun Posts(
                 PostPreview(post = it)
             }
         }
+
+        SpanText(
+            modifier = Modifier
+                .margin(topBottom = 50.px)
+                .textAlign(TextAlign.Center)
+                .fontFamily(Constants.FONT_FAMILY)
+                .color(Colors.Black)
+                .fontSize(16.px)
+                .fontWeight(FontWeight.Bold)
+                .cursor(Cursor.Pointer)
+                .visibility(if (showMoreVisible) Visibility.Visible else Visibility.Hidden)
+                .onClick {
+                    onShowMoreClicked()
+                },
+            text = "Show more",
+        )
     }
 }
