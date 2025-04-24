@@ -1,10 +1,10 @@
 package com.example.blogmultiplatform.data
 
+import com.example.blogmultiplatform.Constants.DATABASE_NAME
+import com.example.blogmultiplatform.Constants.POSTS_PER_PAGE
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.models.User
-import com.example.blogmultiplatform.utils.Constants.DATABASE_NAME
-import com.example.blogmultiplatform.utils.Constants.POSTS_PER_PAGE
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Indexes.descending
@@ -92,5 +92,14 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             .toList()
 
 
+    }
+
+    override suspend fun readSelectedPost(id: String): Post {
+        return postCollection
+            .find(
+                Filters.eq("_id", id)
+            )
+            .toList()
+            .first()
     }
 }

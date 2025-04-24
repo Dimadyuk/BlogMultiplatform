@@ -2,6 +2,7 @@ package com.example.blogmultiplatform.api
 
 import com.example.blogmultiplatform.data.MongoDB
 import com.example.blogmultiplatform.models.ApiListResponse
+import com.example.blogmultiplatform.models.ApiResponse
 import com.example.blogmultiplatform.models.Post
 import com.varabyte.kobweb.api.Api
 import com.varabyte.kobweb.api.ApiContext
@@ -86,6 +87,32 @@ suspend fun searchPostsByTittle(context: ApiContext) {
         context.logger.error(e.message.toString())
         context.res.setBodyText(
             json.encodeToString(ApiListResponse.Error(e.message.toString()))
+        )
+    }
+}
+
+@Api(routeOverride = "readselectedpost")
+suspend fun readSelectedPost(context: ApiContext) {
+    val postId = context.req.params["postId"]
+
+    if (!postId.isNullOrEmpty()) {
+        try {
+            val request = context.data.getValue<MongoDB>().readSelectedPost(postId)
+
+            context.res.setBodyText(
+                json.encodeToString(
+                    ApiResponse.Success(request)
+                )
+            )
+        } catch (e: Exception) {
+            context.logger.error(e.message.toString())
+            context.res.setBodyText(
+                json.encodeToString(ApiResponse.Error(e.message.toString()))
+            )
+        }
+    } else {
+        context.res.setBodyText(
+            json.encodeToString(ApiResponse.Error("Post ID is null or empty"))
         )
     }
 }

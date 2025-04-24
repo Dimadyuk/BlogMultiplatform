@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.models.Theme
+import com.example.blogmultiplatform.navigation.Screen
 import com.example.blogmultiplatform.utils.parseDateString
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
@@ -44,6 +45,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.toAttrs
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
@@ -58,21 +60,22 @@ import org.jetbrains.compose.web.dom.CheckboxInput
 @Composable
 fun PostPreview(
     post: PostWithoutDetails,
-    selectable: Boolean = false,
+    selectableMode: Boolean = false,
     onSelect: (String) -> Unit,
     onDeselect: (String) -> Unit,
 ) {
-    var checked by remember(selectable) { mutableStateOf(false) }
+    val context = rememberPageContext()
+    var checked by remember(selectableMode) { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth(95.percent)
             .margin(bottom = 24.px)
-            .padding(all = if (selectable) 10.px else 0.px)
+            .padding(all = if (selectableMode) 10.px else 0.px)
             .borderRadius(r = 4.px)
             .border(
-                width = if (selectable) 4.px else 0.px,
-                style = if (selectable) LineStyle.Solid else LineStyle.None,
+                width = if (selectableMode) 4.px else 0.px,
+                style = if (selectableMode) LineStyle.Solid else LineStyle.None,
                 color = if (checked) Theme.Primary.rgb else Theme.Grey.rgb
             )
             .cursor(Cursor.Pointer)
@@ -83,13 +86,15 @@ fun PostPreview(
                 )
             )
             .onClick {
-                if (selectable) {
+                if (selectableMode) {
                     checked = !checked
                     if (checked) {
                         onSelect(post.id)
                     } else {
                         onDeselect(post.id)
                     }
+                } else {
+                    context.router.navigateTo(Screen.AdminCreate.passPostId(post.id))
                 }
             }
     ) {
@@ -98,7 +103,7 @@ fun PostPreview(
                 .margin(bottom = 16.px)
                 .fillMaxWidth()
                 .objectFit(ObjectFit.Cover),
-            src = post.thambnail,
+            src = post.thumbnail,
             description = "Post Thumbnail Image",
         )
         SpanText(
@@ -153,7 +158,7 @@ fun PostPreview(
             CheckboxInput(
                 checked = checked,
                 attrs = Modifier
-                    .visibility(if (selectable) Visibility.Visible else Visibility.Hidden)
+                    .visibility(if (selectableMode) Visibility.Visible else Visibility.Hidden)
                     .size(20.px)
                     .toAttrs()
             )
@@ -165,7 +170,7 @@ fun PostPreview(
 fun Posts(
     breakpoint: Breakpoint,
     posts: List<PostWithoutDetails>,
-    selectable: Boolean = false,
+    selectableMode: Boolean = false,
     showMoreVisible: Boolean,
     onShowMoreClicked: () -> Unit,
     onSelect: (String) -> Unit,
@@ -186,7 +191,7 @@ fun Posts(
             posts.forEach {
                 PostPreview(
                     post = it,
-                    selectable = selectable,
+                    selectableMode = selectableMode,
                     onSelect = onSelect,
                     onDeselect = onDeselect,
                 )

@@ -27,6 +27,8 @@ import com.example.blogmultiplatform.utils.parseSwitchText
 import com.example.blogmultiplatform.utils.searchPostsByTittle
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.Transition
+import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -48,6 +50,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
@@ -59,6 +62,7 @@ import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.browser.document
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.css.ms
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Button
@@ -83,22 +87,19 @@ fun MyPostsScreen() {
     var postsToSkip by remember { mutableStateOf(0) }
     var showMoreVisibility by remember { mutableStateOf(false) }
 
-    var selectable by remember { mutableStateOf(false) }
+    var selectableMode by remember { mutableStateOf(false) }
     var switchText by remember { mutableStateOf("Select") }
 
     val hasParams = remember(key1 = context.route) { context.route.params.containsKey("query") }
     val query = remember(key1 = context.route) {
-        try {
-            context.route.params.getValue("query")
-        } catch (e: Exception) {
-            println(e.message)
-            ""
-        }
+        context.route.params["query"] ?: ""
     }
 
     LaunchedEffect(context.route) {
         postsToSkip = 0
         if (hasParams) {
+            (document.getElementById(Id.adminSearchBar) as HTMLInputElement)
+                .value = query.replace("%20", " ")
             searchPostsByTittle(
                 query = query,
                 skip = postsToSkip,
@@ -149,11 +150,19 @@ fun MyPostsScreen() {
                 contentAlignment = Alignment.Center
             ) {
                 SearchBar(
+                    modifier = Modifier
+                        .visibility(if (selectableMode) Visibility.Hidden else Visibility.Visible)
+                        .transition(
+                            Transition.of(
+                                property = TransitionProperty.All,
+                                duration = 200.ms,
+                            )
+                        ),
                     onEnterClick = {
-                        val query =
+                        val searchInput =
                             (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value
-                        if (query.isNotEmpty()) {
-                            context.router.navigateTo(Screen.AdminMyPosts.searchByTitle(query))
+                        if (searchInput.isNotEmpty()) {
+                            context.router.navigateTo(Screen.AdminMyPosts.searchByTitle(searchInput))
                         } else {
                             context.router.navigateTo(Screen.AdminMyPosts.route)
                         }
@@ -173,10 +182,10 @@ fun MyPostsScreen() {
                     Switch(
                         modifier = Modifier.margin(right = 8.px),
                         size = SwitchSize.LG,
-                        checked = selectable,
+                        checked = selectableMode,
                         onCheckedChange = {
-                            selectable = it
-                            if (!selectable) {
+                            selectableMode = it
+                            if (!selectableMode) {
                                 selectedPosts.clear()
                                 switchText = "Select"
                             } else {
@@ -186,7 +195,7 @@ fun MyPostsScreen() {
                     )
                     SpanText(
                         modifier = Modifier
-                            .color(if (selectable) Colors.Black else Theme.HalfBlack.rgb),
+                            .color(if (selectableMode) Colors.Black else Theme.HalfBlack.rgb),
                         text = switchText,
                     )
                 }
@@ -211,7 +220,7 @@ fun MyPostsScreen() {
                                     ids = selectedPosts
                                 )
                                 if (result) {
-                                    selectable = false
+                                    selectableMode = false
                                     switchText = "Select"
                                     postsToSkip -= selectedPosts.size
                                     selectedPosts.forEach { deletedId ->
@@ -280,7 +289,7 @@ fun MyPostsScreen() {
                     }
                 },
                 posts = myPosts,
-                selectable = selectable,
+                selectableMode = selectableMode,
                 onSelect = {
                     selectedPosts.add(it)
                     switchText = parseSwitchText(selectedPosts.toList())

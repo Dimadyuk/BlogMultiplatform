@@ -2,6 +2,7 @@ package com.example.blogmultiplatform.utils
 
 import com.example.blogmultiplatform.Constants.HUMOR_API_URL
 import com.example.blogmultiplatform.models.ApiListResponse
+import com.example.blogmultiplatform.models.ApiResponse
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.RandomJoke
 import com.example.blogmultiplatform.models.User
@@ -162,5 +163,23 @@ suspend fun searchPostsByTittle(
         )
     } catch (e: Exception) {
         onError(e)
+    }
+}
+
+suspend fun fetchSelectedPost(
+    id: String,
+): ApiResponse {
+    return try {
+        val result = window.api.tryGet(
+            apiPath = "readselectedpost?postId=$id",
+        )?.decodeToString()
+
+        if (result != null) {
+            Json.decodeFromString<ApiResponse>(result)
+        } else {
+            ApiResponse.Error("Post not found")
+        }
+    } catch (e: Exception) {
+        ApiResponse.Error(e.message.toString())
     }
 }

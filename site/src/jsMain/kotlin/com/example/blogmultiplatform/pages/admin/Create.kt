@@ -1,6 +1,7 @@
 package com.example.blogmultiplatform.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -12,6 +13,7 @@ import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.components.AdminPageLayout
 import com.example.blogmultiplatform.components.LinkPopup
 import com.example.blogmultiplatform.components.MessagePopup
+import com.example.blogmultiplatform.models.ApiResponse
 import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.ControlStyle
 import com.example.blogmultiplatform.models.EditorControl
@@ -23,6 +25,7 @@ import com.example.blogmultiplatform.utils.IsUserLoggedIn
 import com.example.blogmultiplatform.utils.addPost
 import com.example.blogmultiplatform.utils.applyControlStyle
 import com.example.blogmultiplatform.utils.applyStyle
+import com.example.blogmultiplatform.utils.fetchSelectedPost
 import com.example.blogmultiplatform.utils.getEditor
 import com.example.blogmultiplatform.utils.getSelectedText
 import com.example.blogmultiplatform.utils.noBorder
@@ -127,6 +130,30 @@ fun CreateScreen() {
     }
     val scope = rememberCoroutineScope()
     val context = rememberPageContext()
+
+    val hasPostIdParam = remember(key1 = context.route) {
+        context.route.params.containsKey("postId")
+    }
+    LaunchedEffect(hasPostIdParam) {
+        if (hasPostIdParam) {
+            val postId = context.route.params["postId"] ?: ""
+            val response = fetchSelectedPost(postId)
+            if (response is ApiResponse.Success) {
+                println(response.data)
+                uiState = uiState.copy(
+                    id = response.data.id,
+                    title = response.data.title,
+                    subtitle = response.data.subtitle,
+                    thumbnail = response.data.thumbnail,
+                    content = response.data.content,
+                    category = response.data.category,
+                    main = response.data.main,
+                    popular = response.data.popular,
+                    sponsored = response.data.sponsored
+                )
+            }
+        }
+    }
 
     AdminPageLayout {
         Box(
@@ -373,7 +400,7 @@ fun CreateScreen() {
                                         date = Date.now().toLong(),
                                         title = uiState.title,
                                         subtitle = uiState.subtitle,
-                                        thambnail = uiState.thumbnail,
+                                        thumbnail = uiState.thumbnail,
                                         content = uiState.content,
                                         category = uiState.category,
                                         popular = uiState.popular,

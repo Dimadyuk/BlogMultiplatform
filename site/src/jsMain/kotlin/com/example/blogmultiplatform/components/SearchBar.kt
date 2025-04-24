@@ -18,6 +18,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
 import com.varabyte.kobweb.compose.ui.modifiers.border
 import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.color
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.id
@@ -38,13 +39,14 @@ import org.jetbrains.compose.web.dom.Input
 
 @Composable
 fun SearchBar(
+    modifier: Modifier = Modifier,
     onEnterClick: () -> Unit,
 ) {
     var focused by remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
+            .fillMaxSize()
             .padding(left = 20.px)
             .height(54.px)
             .backgroundColor(Theme.LightGray.rgb)
