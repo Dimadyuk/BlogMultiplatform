@@ -78,4 +78,19 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             )
             .wasAcknowledged()
     }
+
+    override suspend fun searchPostsByTittle(query: String, skip: Int): List<PostWithoutDetails> {
+        val regexQuery = query.toRegex(RegexOption.IGNORE_CASE)
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(
+                Filters.regex(PostWithoutDetails::title.name, query)
+            )
+            .sort(descending(PostWithoutDetails::date.name))
+            .skip(skip)
+            .limit(POSTS_PER_PAGE)
+            .toList()
+
+
+    }
 }

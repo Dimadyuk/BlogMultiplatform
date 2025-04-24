@@ -146,3 +146,21 @@ suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
         false
     }
 }
+
+suspend fun searchPostsByTittle(
+    query: String,
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "searchposts?query=$query&skip=$skip",
+        )?.decodeToString()
+        onSuccess(
+            Json.decodeFromString(result.toString())
+        )
+    } catch (e: Exception) {
+        onError(e)
+    }
+}
