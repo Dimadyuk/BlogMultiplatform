@@ -20,7 +20,7 @@ fun initMongoDB(context: InitApiContext) {
     context.data.add(MongoDB(context))
 }
 
-class MongoDB(val context: InitApiContext) : MongoRepository {
+class MongoDB(private val context: InitApiContext) : MongoRepository {
     private val uri = "mongodb://localhost:27017/"
     private val client = MongoClient.create(uri)
     private val database = client.getDatabase(DATABASE_NAME)
@@ -69,5 +69,13 @@ class MongoDB(val context: InitApiContext) : MongoRepository {
                 .skip(skip)
                 .limit(POSTS_PER_PAGE)
                 .toList()
+    }
+
+    override suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
+        return postCollection
+            .deleteMany(
+                Filters.`in`("_id", ids)
+            )
+            .wasAcknowledged()
     }
 }

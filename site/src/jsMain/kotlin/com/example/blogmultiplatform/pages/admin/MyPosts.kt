@@ -18,10 +18,13 @@ import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.utils.IsUserLoggedIn
+import com.example.blogmultiplatform.utils.deleteSelectedPosts
 import com.example.blogmultiplatform.utils.fetchMyPosts
 import com.example.blogmultiplatform.utils.noBorder
 import com.example.blogmultiplatform.utils.parseSwitchText
+import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -32,6 +35,7 @@ import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
 import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.color
+import com.varabyte.kobweb.compose.ui.modifiers.cursor
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
@@ -41,6 +45,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.silk.components.forms.Switch
@@ -155,7 +160,26 @@ fun MyPostsScreen() {
                         .fontFamily(FONT_FAMILY)
                         .fontSize(14.px)
                         .fontWeight(FontWeight.Medium)
-                        .onClick { }
+                        .cursor(Cursor.Pointer)
+                        .visibility(if (selectedPosts.isNotEmpty()) Visibility.Visible else Visibility.Hidden)
+                        .onClick {
+                            scope.launch {
+                                val result = deleteSelectedPosts(
+                                    ids = selectedPosts
+                                )
+                                if (result) {
+                                    selectable = false
+                                    switchText = "Select"
+                                    postsToSkip -= selectedPosts.size
+                                    selectedPosts.forEach { deletedId ->
+                                        myPosts.removeAll {
+                                            it.id == deletedId
+                                        }
+                                    }
+                                    selectedPosts.clear()
+                                }
+                            }
+                        }
                         .toAttrs()
                 ) {
                     SpanText(text = "Delete")

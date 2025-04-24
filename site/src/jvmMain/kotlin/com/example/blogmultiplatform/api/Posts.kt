@@ -11,12 +11,12 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bson.codecs.ObjectIdGenerator
 
+val json = Json {
+    ignoreUnknownKeys = true
+}
 
 @Api(routeOverride = "addpost")
 suspend fun addPost(context: ApiContext) {
-    val json = Json {
-        ignoreUnknownKeys = true
-    }
 
     try {
         val post = context.req.body?.decodeToString()?.let {
@@ -38,9 +38,6 @@ suspend fun addPost(context: ApiContext) {
 
 @Api(routeOverride = "readmyposts")
 suspend fun readMyPosts(context: ApiContext) {
-    val json = Json {
-        ignoreUnknownKeys = true
-    }
 
     try {
         val skip = context.req.params["skip"]?.toInt() ?: 0
@@ -54,6 +51,23 @@ suspend fun readMyPosts(context: ApiContext) {
         context.logger.error(e.message.toString())
         context.res.setBodyText(
             json.encodeToString(ApiListResponse.Error(e.message.toString()))
+        )
+    }
+}
+
+@Api(routeOverride = "deleteselectedposts")
+suspend fun deleteSelectedPosts(context: ApiContext) {
+
+    try {
+        val request = context.req.body?.decodeToString()?.let {
+            json.decodeFromString<List<String>>(it)
+        }
+        val result = context.data.getValue<MongoDB>().deleteSelectedPosts(request ?: emptyList())
+        context.res.setBodyText(result.toString())
+    } catch (e: Exception) {
+        context.logger.error(e.message.toString())
+        context.res.setBodyText(
+            json.encodeToString(e.message)
         )
     }
 }
