@@ -105,6 +105,7 @@ data class CreatePageUiState(
     val thumbnailInputEnabled: Boolean = false,
     val content: String = "",
     val category: Category = Category.Programming,
+    val buttonText: String = "Create",
     val main: Boolean = false,
     val popular: Boolean = false,
     val sponsored: Boolean = false,
@@ -112,7 +113,26 @@ data class CreatePageUiState(
     val messagePopup: Boolean = false,
     val linkPopup: Boolean = false,
     val imagePopup: Boolean = false,
-)
+) {
+    fun reset() = this.copy(
+        id = "",
+        title = "",
+        subtitle = "",
+        thumbnail = "",
+        thumbnailInputEnabled = false,
+        content = "",
+        category = Category.Programming,
+        buttonText = "Create",
+        main = false,
+        popular = false,
+        sponsored = false,
+        editorVisibility = true,
+        messagePopup = false,
+        linkPopup = false,
+        imagePopup = false
+    )
+}
+
 @Page
 @Composable
 fun CreatePage() {
@@ -140,6 +160,9 @@ fun CreateScreen() {
             val response = fetchSelectedPost(postId)
             if (response is ApiResponse.Success) {
                 println(response.data)
+                (document.getElementById(Id.editor) as HTMLTextAreaElement).value =
+                    response.data.content
+
                 uiState = uiState.copy(
                     id = response.data.id,
                     title = response.data.title,
@@ -147,11 +170,15 @@ fun CreateScreen() {
                     thumbnail = response.data.thumbnail,
                     content = response.data.content,
                     category = response.data.category,
+                    buttonText = "Update",
                     main = response.data.main,
                     popular = response.data.popular,
                     sponsored = response.data.sponsored
                 )
             }
+        } else {
+            (document.getElementById(Id.editor) as HTMLTextAreaElement).value = ""
+            uiState = uiState.reset()
         }
     }
 
@@ -364,6 +391,7 @@ fun CreateScreen() {
                 Editor(editorVisibility = uiState.editorVisibility)
 
                 CreateButton(
+                    text = uiState.buttonText,
                     onClick = {
                         uiState = uiState.copy(
                             title = (document
@@ -766,7 +794,10 @@ fun Editor(editorVisibility: Boolean) {
 }
 
 @Composable
-fun CreateButton(onClick: () -> Unit) {
+fun CreateButton(
+    text: String,
+    onClick: () -> Unit
+) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -780,6 +811,6 @@ fun CreateButton(onClick: () -> Unit) {
             .fontSize(16.px),
         onClick = { onClick.invoke() }
     ) {
-        SpanText(text = "Create")
+        SpanText(text = text)
     }
 }
