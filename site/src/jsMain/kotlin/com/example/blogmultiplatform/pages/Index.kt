@@ -1,6 +1,12 @@
 package com.example.blogmultiplatform.pages
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.blogmultiplatform.components.CategoryNavigationItems
+import com.example.blogmultiplatform.components.OverflowSidePanel
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.varabyte.kobweb.compose.css.StyleVariable
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
@@ -52,12 +58,27 @@ val HomeGridCellStyle = CssStyle.base {
 @Composable
 fun HomePage() {
     val breakpoint = rememberBreakpoint()
+    var overflowMenuOpened by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        HeaderSection(breakpoint = breakpoint)
+        if (overflowMenuOpened) {
+            OverflowSidePanel(
+                onMenuClose = { overflowMenuOpened = false },
+                content = {
+                    CategoryNavigationItems(vertical = true)
+                },
+            )
+        }
+        HeaderSection(
+            breakpoint = breakpoint,
+            onMenuOpen = {
+                overflowMenuOpened = true
+            }
+        )
     }
 }

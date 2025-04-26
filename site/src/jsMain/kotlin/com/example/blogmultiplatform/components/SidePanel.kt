@@ -217,7 +217,8 @@ fun CollapsedSidePanel(
 
 @Composable
 fun OverflowSidePanel(
-    onMenuClick: () -> Unit,
+    onMenuClose: () -> Unit,
+    content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
@@ -232,7 +233,7 @@ fun OverflowSidePanel(
                 translatex = (-100).percent
                 opacity = 0.percent
                 delay(500)
-                onMenuClick()
+                onMenuClose()
             }
         }
     }
@@ -273,7 +274,7 @@ fun OverflowSidePanel(
                                 translatex = (-100).percent
                                 opacity = 0.percent
                                 delay(500)
-                                onMenuClick()
+                                onMenuClose()
                             }
                         },
                     size = IconSize.LG,
@@ -284,13 +285,13 @@ fun OverflowSidePanel(
                     description = "Logo Image",
                 )
             }
-            NavigationItems()
+            content()
         }
     }
 }
 
 @Composable
-private fun NavigationItems() {
+fun NavigationItems() {
     val context = rememberPageContext()
 
     NavigationItem(
