@@ -28,6 +28,8 @@ import org.jetbrains.compose.web.css.px
 @Composable
 fun SuccessPage() {
     val context = rememberPageContext()
+    val postUpdated = context.route.params.containsKey("updated")
+
     LaunchedEffect(Unit) {
         delay(2000)
         context.router.navigateTo(Screen.AdminCreate.route)
@@ -46,7 +48,7 @@ fun SuccessPage() {
             description = "Checkmark Icon"
         )
         SpanText(
-            text = "Post created successfully!",
+            text = if (postUpdated) "Post updated successfully!" else "Post created successfully!",
             modifier = Modifier
                 .fontSize(24.px)
                 .color(Color.black)

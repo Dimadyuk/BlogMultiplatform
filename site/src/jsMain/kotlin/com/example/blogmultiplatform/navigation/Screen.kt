@@ -9,5 +9,7 @@ sealed class Screen(val route: String) {
     data object AdminMyPosts : Screen(route = "/admin/myposts") {
         fun searchByTitle(query: String): String = "/admin/myposts?query=$query"
     }
-    data object AdminSuccess : Screen(route = "/admin/success")
+    data object AdminSuccess : Screen(route = "/admin/success") {
+        fun postUpdated() = "/admin/success?updated=true"
+    }
 }
