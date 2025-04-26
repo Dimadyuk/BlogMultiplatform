@@ -158,6 +158,7 @@ fun MyPostsScreen() {
                                 duration = 200.ms,
                             )
                         ),
+                    breakpoint = breakpoint,
                     onEnterClick = {
                         val searchInput =
                             (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value
@@ -166,6 +167,9 @@ fun MyPostsScreen() {
                         } else {
                             context.router.navigateTo(Screen.AdminMyPosts.route)
                         }
+                    },
+                    onSearchIconClick = {
+
                     }
                 )
             }
