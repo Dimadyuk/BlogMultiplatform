@@ -89,6 +89,23 @@ suspend fun readMainPosts(context: ApiContext) {
     }
 }
 
+@Api(routeOverride = "readlatestposts")
+suspend fun readLatestPosts(context: ApiContext) {
+    try {
+        val skip = context.req.params["skip"]?.toInt() ?: 0
+        val result = context.data.getValue<MongoDB>().readLatestPosts(skip)
+
+        context.res.setBody(
+            ApiListResponse.Success(result)
+        )
+    } catch (e: Exception) {
+        context.logger.error(e.message.toString())
+        context.res.setBody(
+            ApiListResponse.Error(e.message.toString())
+        )
+    }
+}
+
 @Api(routeOverride = "deleteselectedposts")
 suspend fun deleteSelectedPosts(context: ApiContext) {
 

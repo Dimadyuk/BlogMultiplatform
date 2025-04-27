@@ -59,7 +59,6 @@ fun MainPosts(
         modifier = Modifier
             .fillMaxWidth(if (breakpoint >= Breakpoint.MD) 80.percent else 90.percent)
             .margin(topBottom = 50.px)
-
     ) {
         if (breakpoint == Breakpoint.XL) {
             PostPreview(
@@ -69,7 +68,7 @@ fun MainPosts(
             )
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(55.percent)
+                    .fillMaxWidth(80.percent)
                     .margin(left = 20.px)
             ) {
                 posts.drop(1).forEach {
