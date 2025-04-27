@@ -142,6 +142,23 @@ suspend fun fetchMyPosts(
     }
 }
 
+suspend fun fetchMainPosts(
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "readmainposts",
+        )?.decodeToString()
+        onSuccess(
+            result.parseData()
+        )
+    } catch (e: Exception) {
+        println(e)
+        onError(e)
+    }
+}
+
 suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
     return try {
         val result = window.api.tryPost(

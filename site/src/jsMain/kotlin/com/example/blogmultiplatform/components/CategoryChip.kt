@@ -5,7 +5,8 @@ import com.example.blogmultiplatform.Constants.FONT_FAMILY
 import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.Theme
 import com.varabyte.kobweb.compose.css.TextAlign
-import com.varabyte.kobweb.compose.foundation.layout.Box
+import com.varabyte.kobweb.compose.foundation.layout.Arrangement
+import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.border
@@ -22,8 +23,11 @@ import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.px
 
 @Composable
-fun CategoryChip(category: Category) {
-    Box(
+fun CategoryChip(
+    category: Category,
+    darkTheme: Boolean = false,
+) {
+    Column(
         modifier = Modifier
             .height(32.px)
             .padding(leftRight = 14.px)
@@ -31,16 +35,21 @@ fun CategoryChip(category: Category) {
             .border(
                 width = 1.px,
                 style = LineStyle.Solid,
-                color = Theme.HalfBlack.rgb,
+                color = if (darkTheme) Theme.entries.find { it.hex == category.color }?.rgb
+                else Theme.HalfBlack.rgb,
             ),
-        contentAlignment = Alignment.Center
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SpanText(
             modifier = Modifier
                 .fillMaxWidth()
                 .textAlign(TextAlign.Center)
                 .fontFamily(FONT_FAMILY)
-                .color(Theme.HalfBlack.rgb)
+                .color(
+                    if (darkTheme) Theme.entries.find { it.hex == category.color }?.rgb
+                        ?: Theme.HalfWhite.rgb else Theme.HalfBlack.rgb
+                )
                 .fontSize(12.px),
             text = category.name
         )

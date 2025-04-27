@@ -1,6 +1,7 @@
 package com.example.blogmultiplatform.data
 
 import com.example.blogmultiplatform.Constants.DATABASE_NAME
+import com.example.blogmultiplatform.Constants.MAIN_POSTS_LIMIT
 import com.example.blogmultiplatform.Constants.POSTS_PER_PAGE
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.PostWithoutDetails
@@ -88,6 +89,17 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
                 .skip(skip)
                 .limit(POSTS_PER_PAGE)
                 .toList()
+    }
+
+    override suspend fun readMainPosts(): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(
+                Filters.eq(PostWithoutDetails::main.name, true)
+            )
+            .sort(descending(PostWithoutDetails::date.name))
+            .limit(MAIN_POSTS_LIMIT)
+            .toList()
     }
 
     override suspend fun deleteSelectedPosts(ids: List<String>): Boolean {

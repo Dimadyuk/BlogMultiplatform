@@ -1,13 +1,17 @@
 package com.example.blogmultiplatform.pages
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.components.CategoryNavigationItems
 import com.example.blogmultiplatform.components.OverflowSidePanel
+import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.sections.HeaderSection
+import com.example.blogmultiplatform.sections.MainSection
+import com.example.blogmultiplatform.utils.fetchMainPosts
 import com.varabyte.kobweb.compose.css.StyleVariable
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -60,6 +64,20 @@ fun HomePage() {
     val breakpoint = rememberBreakpoint()
     var overflowMenuOpened by remember { mutableStateOf(false) }
 
+    var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
+
+    LaunchedEffect(Unit) {
+        fetchMainPosts(
+            onSuccess = {
+                mainPosts = it
+                println("Main posts - $mainPosts")
+            },
+            onError = {
+
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -79,6 +97,10 @@ fun HomePage() {
             onMenuOpen = {
                 overflowMenuOpened = true
             }
+        )
+        MainSection(
+            breakpoint = breakpoint,
+            posts = mainPosts,
         )
     }
 }
