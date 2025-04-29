@@ -13,7 +13,7 @@ import com.example.blogmultiplatform.Constants.POSTS_PER_PAGE
 import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.components.AdminPageLayout
-import com.example.blogmultiplatform.components.Posts
+import com.example.blogmultiplatform.components.PostsView
 import com.example.blogmultiplatform.components.SearchBar
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.PostWithoutDetails
@@ -241,10 +241,10 @@ fun MyPostsScreen() {
                     SpanText(text = "Delete")
                 }
             }
-            Posts(
+            PostsView(
                 breakpoint = breakpoint,
                 showMoreVisible = showMoreVisibility,
-                onShowMoreClicked = {
+                onShowMore = {
                     scope.launch {
                         if (hasParams) {
                             searchPostsByTittle(
@@ -302,6 +302,7 @@ fun MyPostsScreen() {
                     selectedPosts.remove(it)
                     switchText = parseSwitchText(selectedPosts.toList())
                 },
+                onClick = { context.router.navigateTo(Screen.AdminCreate.passPostId(it)) },
             )
         }
     }

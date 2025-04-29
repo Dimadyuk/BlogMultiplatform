@@ -3,14 +3,19 @@ package com.example.blogmultiplatform.pages
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.components.CategoryNavigationItems
 import com.example.blogmultiplatform.components.OverflowSidePanel
 import com.example.blogmultiplatform.models.ApiListResponse
+import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.example.blogmultiplatform.sections.MainSection
+import com.example.blogmultiplatform.sections.PostsSection
 import com.example.blogmultiplatform.utils.fetchLatestPosts
 import com.example.blogmultiplatform.utils.fetchMainPosts
 import com.varabyte.kobweb.compose.css.StyleVariable
@@ -33,6 +38,7 @@ import com.varabyte.kobweb.silk.style.CssStyle
 import com.varabyte.kobweb.silk.style.base
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.cssRem
 import org.jetbrains.compose.web.css.vh
 
@@ -64,10 +70,12 @@ val HomeGridCellStyle = CssStyle.base {
 fun HomePage() {
     val breakpoint = rememberBreakpoint()
     var overflowMenuOpened by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
-    var latestPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
+    val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     var latestPostsToSkip by remember { mutableStateOf(0) }
+    var showMoreLatest by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         fetchMainPosts(
@@ -80,7 +88,13 @@ fun HomePage() {
         fetchLatestPosts(
             skip = latestPostsToSkip,
             onSuccess = {
-                latestPosts = it
+                if (it is ApiListResponse.Success) {
+                    latestPosts.addAll(it.data)
+                    latestPostsToSkip += Constants.POSTS_PER_PAGE
+                    if (it.data.size >= Constants.POSTS_PER_PAGE) {
+                        showMoreLatest = true
+                    }
+                }
                 println("Latest posts - $it")
             },
             onError = { }
@@ -110,6 +124,36 @@ fun HomePage() {
         MainSection(
             breakpoint = breakpoint,
             posts = mainPosts,
+        )
+        PostsSection(
+            breakpoint = breakpoint,
+            title = "Latest Posts",
+            posts = latestPosts,
+            showMoreVisibility = showMoreLatest,
+            onShowMore = {
+                scope.launch {
+                    fetchLatestPosts(
+                        skip = latestPostsToSkip,
+                        onSuccess = { response ->
+                            if (response is ApiListResponse.Success) {
+                                if (response.data.isNotEmpty()) {
+                                    if (response.data.size < Constants.POSTS_PER_PAGE) {
+                                        showMoreLatest = false
+                                    }
+                                    latestPosts.addAll(response.data)
+                                    latestPostsToSkip += Constants.POSTS_PER_PAGE
+                                } else {
+                                    showMoreLatest = false
+                                }
+                            }
+                        },
+                        onError = { }
+                    )
+                }
+            },
+            onClick = {
+
+            },
         )
     }
 }
