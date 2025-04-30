@@ -16,7 +16,7 @@ import org.jetbrains.compose.web.css.px
 @Composable
 fun PostsSection(
     breakpoint: Breakpoint,
-    title: String,
+    title: String? = null,
     posts: List<PostWithoutDetails>,
     showMoreVisibility: Boolean,
     onShowMore: () -> Unit,

@@ -1,6 +1,9 @@
 package com.example.blogmultiplatform.navigation
 
+import com.example.blogmultiplatform.models.Category
+
 sealed class Screen(val route: String) {
+    data object Home : Screen(route = "/")
     data object AdminHome : Screen(route = "/admin/")
     data object AdminLogin : Screen(route = "/admin/login")
     data object AdminCreate : Screen(route = "/admin/create") {
@@ -11,5 +14,8 @@ sealed class Screen(val route: String) {
     }
     data object AdminSuccess : Screen(route = "/admin/success") {
         fun postUpdated() = "/admin/success?updated=true"
+    }
+    data object Search : Screen(route = "/search/query") {
+        fun searchByCategory(category: Category) = "/search/query?category=${category.name}"
     }
 }

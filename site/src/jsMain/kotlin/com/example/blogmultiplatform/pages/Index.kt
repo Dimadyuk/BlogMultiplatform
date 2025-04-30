@@ -96,6 +96,14 @@ fun HomePage() {
             onError = { }
         )
     }
+    if (overflowMenuOpened) {
+        OverflowSidePanel(
+            onMenuClose = { overflowMenuOpened = false },
+            content = {
+                CategoryNavigationItems(vertical = true)
+            },
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -103,14 +111,6 @@ fun HomePage() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (overflowMenuOpened) {
-            OverflowSidePanel(
-                onMenuClose = { overflowMenuOpened = false },
-                content = {
-                    CategoryNavigationItems(vertical = true)
-                },
-            )
-        }
         HeaderSection(
             breakpoint = breakpoint,
             onMenuOpen = {

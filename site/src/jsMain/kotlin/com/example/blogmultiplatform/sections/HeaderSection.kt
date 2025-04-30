@@ -10,7 +10,9 @@ import com.example.blogmultiplatform.Constants.PAGE_WIDTH
 import com.example.blogmultiplatform.Res
 import com.example.blogmultiplatform.components.CategoryNavigationItems
 import com.example.blogmultiplatform.components.SearchBar
+import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.Theme
+import com.example.blogmultiplatform.navigation.Screen
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Row
@@ -27,6 +29,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.width
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.icons.fa.FaBars
 import com.varabyte.kobweb.silk.components.icons.fa.FaXmark
@@ -38,6 +41,8 @@ import org.jetbrains.compose.web.css.px
 @Composable
 fun HeaderSection(
     breakpoint: Breakpoint,
+    selectedCategory: Category? = null,
+    logo: String = Res.Image.LOGO_HOME,
     onMenuOpen: () -> Unit,
 ) {
     Box(
@@ -55,7 +60,9 @@ fun HeaderSection(
         ) {
             Header(
                 breakpoint = breakpoint,
-                onMenuClick = onMenuOpen
+                onMenuClick = onMenuOpen,
+                logo = logo,
+                selectedCategory = selectedCategory,
             )
         }
     }
@@ -64,11 +71,14 @@ fun HeaderSection(
 @Composable
 fun Header(
     breakpoint: Breakpoint,
+    logo: String,
+    selectedCategory: Category?,
     onMenuClick: () -> Unit,
 ) {
     var fullSearchBarOpened by remember {
         mutableStateOf(false)
     }
+    val context = rememberPageContext()
 
     Row(
         modifier = Modifier
@@ -109,14 +119,16 @@ fun Header(
                     .width(if (breakpoint >= Breakpoint.SM) 100.px else 70.px)
                     .cursor(Cursor.Pointer)
                     .onClick {
-                        //TODO
+                        context.router.navigateTo(Screen.Home.route)
                     },
-                src = Res.Image.LOGO_HOME,
+                src = logo,
                 description = "Logo image",
             )
         }
         if (breakpoint >= Breakpoint.MD) {
-            CategoryNavigationItems()
+            CategoryNavigationItems(
+                selectedCategory = selectedCategory,
+            )
         }
 
         Spacer()

@@ -3,6 +3,7 @@ package com.example.blogmultiplatform.data
 import com.example.blogmultiplatform.Constants.DATABASE_NAME
 import com.example.blogmultiplatform.Constants.MAIN_POSTS_LIMIT
 import com.example.blogmultiplatform.Constants.POSTS_PER_PAGE
+import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.Newsletter
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.PostWithoutDetails
@@ -169,7 +170,6 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
     }
 
     override suspend fun searchPostsByTittle(query: String, skip: Int): List<PostWithoutDetails> {
-        val regexQuery = query.toRegex(RegexOption.IGNORE_CASE)
         return postCollection
             .withDocumentClass(PostWithoutDetails::class.java)
             .find(
@@ -179,8 +179,21 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             .skip(skip)
             .limit(POSTS_PER_PAGE)
             .toList()
+    }
 
-
+    override suspend fun searchPostsByCategory(
+        category: Category,
+        skip: Int
+    ): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(
+                Filters.eq(PostWithoutDetails::category.name, category)
+            )
+            .sort(descending(PostWithoutDetails::date.name))
+            .skip(skip)
+            .limit(POSTS_PER_PAGE)
+            .toList()
     }
 
     override suspend fun readSelectedPost(id: String): Post {

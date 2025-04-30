@@ -3,6 +3,7 @@ package com.example.blogmultiplatform.api
 import com.example.blogmultiplatform.data.MongoDB
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.ApiResponse
+import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.Post
 import com.varabyte.kobweb.api.Api
 import com.varabyte.kobweb.api.ApiContext
@@ -162,6 +163,26 @@ suspend fun searchPostsByTittle(context: ApiContext) {
         val query = context.req.params["query"] ?: ""
         val skip = context.req.params["skip"]?.toInt() ?: 0
         val request = context.data.getValue<MongoDB>().searchPostsByTittle(query, skip)
+
+        context.res.setBody(
+            ApiListResponse.Success(request)
+        )
+    } catch (e: Exception) {
+        context.logger.error(e.message.toString())
+        context.res.setBody(
+            ApiListResponse.Error(e.message.toString())
+        )
+    }
+}
+
+@Api(routeOverride = "searchpostsbycategory")
+suspend fun searchPostsByCategory(context: ApiContext) {
+    try {
+        val category = Category.valueOf(
+            context.req.params["category"] ?: Category.Programming.name
+        )
+        val skip = context.req.params["skip"]?.toInt() ?: 0
+        val request = context.data.getValue<MongoDB>().searchPostsByCategory(category, skip)
 
         context.res.setBody(
             ApiListResponse.Success(request)

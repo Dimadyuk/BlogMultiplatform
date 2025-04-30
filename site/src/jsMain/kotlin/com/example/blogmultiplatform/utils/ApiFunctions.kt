@@ -3,6 +3,7 @@ package com.example.blogmultiplatform.utils
 import com.example.blogmultiplatform.Constants.HUMOR_API_URL
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.ApiResponse
+import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.Newsletter
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.RandomJoke
@@ -237,6 +238,24 @@ suspend fun searchPostsByTittle(
     try {
         val result = window.api.tryGet(
             apiPath = "searchposts?query=$query&skip=$skip",
+        )?.decodeToString()
+        onSuccess(
+            result.parseData()
+        )
+    } catch (e: Exception) {
+        onError(e)
+    }
+}
+
+suspend fun searchPostsByCategory(
+    category: Category,
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "searchpostsbycategory?category=${category.name}&skip=$skip",
         )?.decodeToString()
         onSuccess(
             result.parseData()
