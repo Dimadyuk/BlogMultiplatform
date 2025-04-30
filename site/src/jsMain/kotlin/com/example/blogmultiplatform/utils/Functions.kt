@@ -173,3 +173,10 @@ fun parseSwitchText(
         "${posts.size} Posts Selected"
     }
 }
+
+fun validateEmail(email: String): Boolean {
+    val emailRegex = Regex(
+        pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    )
+    return emailRegex.matches(email)
+}

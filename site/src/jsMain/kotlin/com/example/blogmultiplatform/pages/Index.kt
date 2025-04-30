@@ -15,6 +15,7 @@ import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.example.blogmultiplatform.sections.MainSection
+import com.example.blogmultiplatform.sections.NewsletterSection
 import com.example.blogmultiplatform.sections.PostsSection
 import com.example.blogmultiplatform.sections.SponsoredPostsSection
 import com.example.blogmultiplatform.utils.fetchLatestPosts
@@ -186,6 +187,9 @@ fun HomePage() {
             onClick = {
 
             },
+        )
+        NewsletterSection(
+            breakpoint = breakpoint
         )
     }
 }
