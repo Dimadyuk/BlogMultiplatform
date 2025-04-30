@@ -19,6 +19,7 @@ import com.example.blogmultiplatform.sections.PostsSection
 import com.example.blogmultiplatform.sections.SponsoredPostsSection
 import com.example.blogmultiplatform.utils.fetchLatestPosts
 import com.example.blogmultiplatform.utils.fetchMainPosts
+import com.example.blogmultiplatform.utils.fetchPopularPosts
 import com.example.blogmultiplatform.utils.fetchSponsoredPosts
 import com.varabyte.kobweb.compose.css.StyleVariable
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
@@ -75,11 +76,16 @@ fun HomePage() {
     val scope = rememberCoroutineScope()
 
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
-    val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+
     val sponsoredPosts = remember { mutableStateListOf<PostWithoutDetails>() }
 
+    val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     var latestPostsToSkip by remember { mutableStateOf(0) }
     var showMoreLatest by remember { mutableStateOf(false) }
+
+    val popularPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    var popularPostsToSkip by remember { mutableStateOf(0) }
+    var showMorePopular by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         fetchMainPosts(
@@ -109,6 +115,16 @@ fun HomePage() {
                     sponsoredPosts.addAll(it.data)
                 }
                 println("Sponsored posts - $it")
+            },
+            onError = { }
+        )
+        fetchPopularPosts(
+            skip = popularPostsToSkip,
+            onSuccess = {
+                if (it is ApiListResponse.Success) {
+                    popularPosts.addAll(it.data)
+                }
+                println("Popular posts - $it")
             },
             onError = { }
         )

@@ -177,6 +177,24 @@ suspend fun fetchLatestPosts(
     }
 }
 
+suspend fun fetchPopularPosts(
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "readpopularposts?skip=$skip"
+        )?.decodeToString()
+        onSuccess(
+            result.parseData()
+        )
+    } catch (e: Exception) {
+        println(e)
+        onError(e)
+    }
+}
+
 suspend fun fetchSponsoredPosts(
     onSuccess: (ApiListResponse) -> Unit,
     onError: (Exception) -> Unit
