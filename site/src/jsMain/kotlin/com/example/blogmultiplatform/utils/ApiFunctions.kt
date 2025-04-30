@@ -3,6 +3,7 @@ package com.example.blogmultiplatform.utils
 import com.example.blogmultiplatform.Constants.HUMOR_API_URL
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.ApiResponse
+import com.example.blogmultiplatform.models.Newsletter
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.RandomJoke
 import com.example.blogmultiplatform.models.User
@@ -257,6 +258,17 @@ suspend fun fetchSelectedPost(
     } catch (e: Exception) {
         ApiResponse.Error(e.message.toString())
     }
+}
+
+suspend fun subscribeNewsletter(
+    newsletter: Newsletter,
+): String {
+    return window.api.tryPost(
+        apiPath = "subscribe",
+        body = Json.encodeToString(newsletter).encodeToByteArray()
+    )?.decodeToString()?.let {
+        Json.decodeFromString(it)
+    } ?: "Something went wrong. Please try again later."
 }
 
 inline fun <reified T> String?.parseData(): T {
