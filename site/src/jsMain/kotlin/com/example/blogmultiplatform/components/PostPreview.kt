@@ -44,9 +44,9 @@ import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
-import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.text.SpanText
+import org.jetbrains.compose.web.css.CSSColorValue
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.ms
 import org.jetbrains.compose.web.css.percent
@@ -62,16 +62,19 @@ fun PostPreview(
     vertical: Boolean = false,
     thumbnailHeight: Int = 320,
     titleMaxLength: Int = 2,
+    titleColor: CSSColorValue = Colors.Black,
     onSelect: (String) -> Unit = {},
     onDeselect: (String) -> Unit = {},
     onClick: (String) -> Unit = {},
 ) {
-    val context = rememberPageContext()
     var checked by remember(selectableMode) { mutableStateOf(false) }
 
     if (vertical) {
         Row(
             modifier = modifier
+                .onClick {
+                    onClick(post.id)
+                }
                 .cursor(Cursor.Pointer)
         ) {
             PostContent(
@@ -82,6 +85,7 @@ fun PostPreview(
                 vertical = vertical,
                 thumbnailHeight = thumbnailHeight,
                 titleMaxLength = titleMaxLength,
+                titleColor = titleColor,
             )
         }
     } else {
@@ -124,6 +128,7 @@ fun PostPreview(
                 vertical = vertical,
                 thumbnailHeight = thumbnailHeight,
                 titleMaxLength = titleMaxLength,
+                titleColor = titleColor,
             )
         }
     }
@@ -132,12 +137,13 @@ fun PostPreview(
 @Composable
 fun PostContent(
     post: PostWithoutDetails,
-    darkTheme: Boolean = false,
-    selectableMode: Boolean = false,
-    vertical: Boolean,
-    checked: Boolean = false,
+    titleColor: CSSColorValue,
     thumbnailHeight: Int,
     titleMaxLength: Int,
+    vertical: Boolean,
+    darkTheme: Boolean = false,
+    selectableMode: Boolean = false,
+    checked: Boolean = false,
 ) {
     Image(
         modifier = Modifier
@@ -168,7 +174,7 @@ fun PostContent(
                 .fontSize(20.px)
                 .fontWeight(FontWeight.Bold)
                 .margin(bottom = 8.px)
-                .color(if (darkTheme) Colors.White else Colors.Black)
+                .color(if (darkTheme) Colors.White else titleColor)
                 .textOverflow(TextOverflow.Ellipsis)
                 .overflow(Overflow.Hidden)
                 .styleModifier {

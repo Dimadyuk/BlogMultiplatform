@@ -16,8 +16,10 @@ import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.example.blogmultiplatform.sections.MainSection
 import com.example.blogmultiplatform.sections.PostsSection
+import com.example.blogmultiplatform.sections.SponsoredPostsSection
 import com.example.blogmultiplatform.utils.fetchLatestPosts
 import com.example.blogmultiplatform.utils.fetchMainPosts
+import com.example.blogmultiplatform.utils.fetchSponsoredPosts
 import com.varabyte.kobweb.compose.css.StyleVariable
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -74,6 +76,8 @@ fun HomePage() {
 
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
     val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    val sponsoredPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+
     var latestPostsToSkip by remember { mutableStateOf(0) }
     var showMoreLatest by remember { mutableStateOf(false) }
 
@@ -96,6 +100,15 @@ fun HomePage() {
                     }
                 }
                 println("Latest posts - $it")
+            },
+            onError = { }
+        )
+        fetchSponsoredPosts(
+            onSuccess = {
+                if (it is ApiListResponse.Success) {
+                    sponsoredPosts.addAll(it.data)
+                }
+                println("Sponsored posts - $it")
             },
             onError = { }
         )
@@ -151,6 +164,13 @@ fun HomePage() {
                     )
                 }
             },
+            onClick = {
+
+            },
+        )
+        SponsoredPostsSection(
+            breakpoint = breakpoint,
+            posts = sponsoredPosts,
             onClick = {
 
             },
