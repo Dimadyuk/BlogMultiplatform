@@ -219,7 +219,7 @@ suspend fun readSelectedPost(context: ApiContext) {
         }
     } else {
         context.res.setBody(
-            ApiResponse.Error("Post ID is null or empty")
+            ApiResponse.Error("Selected Post doesn't exist.")
         )
     }
 }

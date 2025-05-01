@@ -5,11 +5,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.Constants.POST_ID_PARAM
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.Res
+import com.example.blogmultiplatform.components.ErrorView
 import com.example.blogmultiplatform.components.LoadingIndicator
 import com.example.blogmultiplatform.components.NavigationItems
 import com.example.blogmultiplatform.components.OverflowSidePanel
@@ -42,6 +44,8 @@ import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.browser.document
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Div
 import org.w3c.dom.HTMLDivElement
@@ -49,6 +53,7 @@ import org.w3c.dom.HTMLDivElement
 @Page(routeOverride = "post")
 @Composable
 fun PostPage() {
+    val scope = rememberCoroutineScope()
     val context = rememberPageContext()
     var apiResponse by remember { mutableStateOf<ApiResponse>(ApiResponse.Idle) }
     val breakpoint = rememberBreakpoint()
@@ -91,9 +96,21 @@ fun PostPage() {
 
             is ApiResponse.Success -> {
                 PostContent(post = (apiResponse as ApiResponse.Success).data)
+                scope.launch {
+                    delay(100)
+                    try {
+                        js("if (typeof hljs !== 'undefined') hljs.highlightAll()") as Unit
+                    } catch (e: Exception) {
+                        console.log("Error: ${e.message}")
+                    }
+                }
             }
 
-            else -> {}
+            is ApiResponse.Error -> {
+                val errorMessage = (apiResponse as ApiResponse.Error).message
+                console.log("Error: $errorMessage")
+                ErrorView(message = errorMessage)
+            }
         }
     }
 }
@@ -106,7 +123,7 @@ fun PostContent(post: Post) {
 
     Column(
         modifier = Modifier
-            .margin(top = 50.px)
+            .margin(top = 50.px, bottom = 100.px)
             .fillMaxWidth()
             .maxWidth(800.px),
         horizontalAlignment = Alignment.CenterHorizontally,
