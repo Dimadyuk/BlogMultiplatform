@@ -221,6 +221,7 @@ fun OverflowSidePanel(
     content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val context = rememberPageContext()
     val breakpoint = rememberBreakpoint()
     var translatex by remember { mutableStateOf((-100).percent) }
     var opacity by remember { mutableStateOf(0.percent) }
@@ -280,7 +281,12 @@ fun OverflowSidePanel(
                     size = IconSize.LG,
                 )
                 Image(
-                    modifier = Modifier.width(80.px),
+                    modifier = Modifier
+                        .onClick {
+                            context.router.navigateTo(Screen.Home.route)
+                        }
+                        .cursor(Cursor.Pointer)
+                        .width(80.px),
                     src = Res.Image.LOGO,
                     description = "Logo Image",
                 )

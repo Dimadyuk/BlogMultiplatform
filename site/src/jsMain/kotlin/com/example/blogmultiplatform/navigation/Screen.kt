@@ -17,5 +17,6 @@ sealed class Screen(val route: String) {
     }
     data object Search : Screen(route = "/search/query") {
         fun searchByCategory(category: Category) = "/search/query?category=${category.name}"
+        fun searchByTitle(query: String) = "/search/query?query=${query}"
     }
 }

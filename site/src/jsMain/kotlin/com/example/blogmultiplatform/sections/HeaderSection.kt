@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants.HEADER_HEIGHT
 import com.example.blogmultiplatform.Constants.PAGE_WIDTH
+import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.Res
 import com.example.blogmultiplatform.components.CategoryNavigationItems
 import com.example.blogmultiplatform.components.SearchBar
@@ -35,8 +36,10 @@ import com.varabyte.kobweb.silk.components.icons.fa.FaBars
 import com.varabyte.kobweb.silk.components.icons.fa.FaXmark
 import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
+import kotlinx.browser.document
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
+import org.w3c.dom.HTMLInputElement
 
 @Composable
 fun HeaderSection(
@@ -135,7 +138,12 @@ fun Header(
 
         SearchBar(
             onEnterClick = {
-                //TODO
+                val query = (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value
+                if (query.isNotBlank()) {
+                    context.router.navigateTo(
+                        Screen.Search.searchByTitle(query = query)
+                    )
+                }
             },
             fullWidth = fullSearchBarOpened,
             darkTheme = true,
