@@ -1,5 +1,7 @@
 pluginManagement {
     repositories {
+        google()
+        mavenCentral()
         gradlePluginPortal()
         maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
     }
@@ -8,3 +10,4 @@ pluginManagement {
 rootProject.name = "blogmultiplatform"
 
 include(":site")
+include(":androidapp")
