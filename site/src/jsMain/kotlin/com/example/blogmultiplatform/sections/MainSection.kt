@@ -22,7 +22,8 @@ import org.jetbrains.compose.web.css.px
 @Composable
 fun MainSection(
     breakpoint: Breakpoint,
-    posts: ApiListResponse
+    posts: ApiListResponse,
+    onClick: (String) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -43,6 +44,7 @@ fun MainSection(
                     MainPosts(
                         posts = posts.data,
                         breakpoint = breakpoint,
+                        onClick = onClick
                     )
                 }
             }
@@ -53,7 +55,8 @@ fun MainSection(
 @Composable
 fun MainPosts(
     breakpoint: Breakpoint,
-    posts: List<PostWithoutDetails>
+    posts: List<PostWithoutDetails>,
+    onClick: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -65,19 +68,21 @@ fun MainPosts(
                 post = posts.first(),
                 thumbnailHeight = 640,
                 darkTheme = true,
+                onClick = { onClick(posts.first().id) },
             )
             Column(
                 modifier = Modifier
                     .fillMaxWidth(80.percent)
                     .margin(left = 20.px)
             ) {
-                posts.drop(1).forEach {
+                posts.drop(1).forEach { post ->
                     PostPreview(
-                        post = it,
+                        post = post,
                         darkTheme = true,
                         vertical = true,
                         thumbnailHeight = 200,
                         titleMaxLength = 1,
+                        onClick = { onClick(post.id) },
                     )
                 }
             }
@@ -91,17 +96,20 @@ fun MainPosts(
                 PostPreview(
                     post = posts.first(),
                     darkTheme = true,
+                    onClick = { onClick(posts.first().id) },
                 )
             }
             PostPreview(
                 post = posts[1],
                 darkTheme = true,
+                onClick = { onClick(posts[1].id) },
             )
         } else {
             PostPreview(
                 post = posts.first(),
                 thumbnailHeight = 640,
                 darkTheme = true,
+                onClick = { onClick(posts.first().id) },
             )
         }
     }

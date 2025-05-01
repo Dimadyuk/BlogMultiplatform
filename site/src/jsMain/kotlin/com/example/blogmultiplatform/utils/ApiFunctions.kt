@@ -1,6 +1,11 @@
 package com.example.blogmultiplatform.utils
 
+import com.example.blogmultiplatform.Constants.AUTHOR_PARAM
+import com.example.blogmultiplatform.Constants.CATEGORY_PARAM
 import com.example.blogmultiplatform.Constants.HUMOR_API_URL
+import com.example.blogmultiplatform.Constants.POST_ID_PARAM
+import com.example.blogmultiplatform.Constants.QUERY_PARAM
+import com.example.blogmultiplatform.Constants.SKIP_PARAM
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.ApiResponse
 import com.example.blogmultiplatform.models.Category
@@ -134,7 +139,7 @@ suspend fun fetchMyPosts(
 ) {
     try {
         val result = window.api.tryGet(
-            apiPath = "readmyposts?skip=$skip&author=${localStorage["username"]}",
+            apiPath = "readmyposts?$SKIP_PARAM=$skip&$AUTHOR_PARAM=${localStorage["username"]}",
         )?.decodeToString()
         onSuccess(
             result.parseData()
@@ -168,7 +173,7 @@ suspend fun fetchLatestPosts(
 ) {
     try {
         val result = window.api.tryGet(
-            apiPath = "readlatestposts?skip=$skip"
+            apiPath = "readlatestposts?$SKIP_PARAM=$skip"
         )?.decodeToString()
         onSuccess(
             result.parseData()
@@ -186,7 +191,7 @@ suspend fun fetchPopularPosts(
 ) {
     try {
         val result = window.api.tryGet(
-            apiPath = "readpopularposts?skip=$skip"
+            apiPath = "readpopularposts?$SKIP_PARAM=$skip"
         )?.decodeToString()
         onSuccess(
             result.parseData()
@@ -237,7 +242,7 @@ suspend fun searchPostsByTittle(
 ) {
     try {
         val result = window.api.tryGet(
-            apiPath = "searchposts?query=$query&skip=$skip",
+            apiPath = "searchposts?$QUERY_PARAM=$query&$SKIP_PARAM=$skip",
         )?.decodeToString()
         onSuccess(
             result.parseData()
@@ -255,7 +260,7 @@ suspend fun searchPostsByCategory(
 ) {
     try {
         val result = window.api.tryGet(
-            apiPath = "searchpostsbycategory?category=${category.name}&skip=$skip",
+            apiPath = "searchpostsbycategory?$CATEGORY_PARAM=${category.name}&$SKIP_PARAM=$skip",
         )?.decodeToString()
         onSuccess(
             result.parseData()
@@ -270,7 +275,7 @@ suspend fun fetchSelectedPost(
 ): ApiResponse {
     return try {
         val result = window.api.tryGet(
-            apiPath = "readselectedpost?postId=$id",
+            apiPath = "readselectedpost?$POST_ID_PARAM=$id",
         )?.decodeToString()
 
         result?.parseData() ?: ApiResponse.Error("Post not found")

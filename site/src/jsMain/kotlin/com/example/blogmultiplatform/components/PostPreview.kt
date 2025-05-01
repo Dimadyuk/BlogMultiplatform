@@ -65,7 +65,7 @@ fun PostPreview(
     titleColor: CSSColorValue = Colors.Black,
     onSelect: (String) -> Unit = {},
     onDeselect: (String) -> Unit = {},
-    onClick: (String) -> Unit = {},
+    onClick: (String) -> Unit,
 ) {
     var checked by remember(selectableMode) { mutableStateOf(false) }
 

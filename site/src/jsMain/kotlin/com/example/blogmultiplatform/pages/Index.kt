@@ -13,6 +13,7 @@ import com.example.blogmultiplatform.components.CategoryNavigationItems
 import com.example.blogmultiplatform.components.OverflowSidePanel
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.PostWithoutDetails
+import com.example.blogmultiplatform.navigation.Screen
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.example.blogmultiplatform.sections.MainSection
 import com.example.blogmultiplatform.sections.NewsletterSection
@@ -28,6 +29,7 @@ import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.core.Page
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.coroutines.launch
 
@@ -37,6 +39,7 @@ fun HomePage() {
     val breakpoint = rememberBreakpoint()
     var overflowMenuOpened by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val context = rememberPageContext()
 
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
 
@@ -120,6 +123,9 @@ fun HomePage() {
         MainSection(
             breakpoint = breakpoint,
             posts = mainPosts,
+            onClick = {
+                context.router.navigateTo(Screen.PostPage.getPost(id = it))
+            },
         )
         PostsSection(
             breakpoint = breakpoint,
@@ -148,14 +154,14 @@ fun HomePage() {
                 }
             },
             onClick = {
-
+                context.router.navigateTo(Screen.PostPage.getPost(id = it))
             },
         )
         SponsoredPostsSection(
             breakpoint = breakpoint,
             posts = sponsoredPosts,
             onClick = {
-
+                context.router.navigateTo(Screen.PostPage.getPost(id = it))
             },
         )
         PostsSection(
@@ -185,7 +191,7 @@ fun HomePage() {
                 }
             },
             onClick = {
-
+                context.router.navigateTo(Screen.PostPage.getPost(id = it))
             },
         )
         NewsletterSection(

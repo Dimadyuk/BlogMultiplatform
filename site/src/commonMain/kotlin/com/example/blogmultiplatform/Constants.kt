@@ -8,9 +8,16 @@ object Constants {
     const val COLLAPSED_PANEL_HEIGHT = 100
     const val HUMOR_API_URL =
         "https://api.humorapi.com/jokes/random?api-key=4a64d9015fe841d1b5ca8ec179ee5639&max-length=180"
-    const val POSTS_PER_PAGE = 8
     const val MAIN_POSTS_LIMIT = 4
     const val DATABASE_NAME = "my_blog"
+
+    const val POSTS_PER_PAGE = 8
+    const val QUERY_PARAM = "query"
+    const val CATEGORY_PARAM = "category"
+    const val POST_ID_PARAM = "postId"
+    const val SKIP_PARAM = "skip"
+    const val AUTHOR_PARAM = "author"
+    const val UPDATE_PARAM = "updated"
 }
 
 object Res {
@@ -57,4 +64,5 @@ object Id{
     const val linkTitleInput = "linkTitleInput"
     const val adminSearchBar = "adminSearchBar"
     const val emailInput = "emailInput"
+    const val postContent = "postContent"
 }

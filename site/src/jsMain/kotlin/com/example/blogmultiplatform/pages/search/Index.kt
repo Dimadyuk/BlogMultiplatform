@@ -9,6 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants
+import com.example.blogmultiplatform.Constants.CATEGORY_PARAM
+import com.example.blogmultiplatform.Constants.QUERY_PARAM
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.Res
 import com.example.blogmultiplatform.components.CategoryNavigationItems
@@ -17,6 +19,7 @@ import com.example.blogmultiplatform.components.OverflowSidePanel
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.PostWithoutDetails
+import com.example.blogmultiplatform.navigation.Screen
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.example.blogmultiplatform.sections.PostsSection
 import com.example.blogmultiplatform.utils.searchPostsByCategory
@@ -53,16 +56,16 @@ fun SearchPage() {
     var postsToSkip by remember { mutableStateOf(0) }
     val searchedPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     val hasCategoryParam = remember(key1 = context.route) {
-        context.route.params.containsKey("category")
+        context.route.params.containsKey(CATEGORY_PARAM)
     }
     val hasQueryParam = remember(key1 = context.route) {
-        context.route.params.containsKey("query")
+        context.route.params.containsKey(QUERY_PARAM)
     }
     val value = remember(key1 = context.route) {
         if (hasCategoryParam) {
-            context.route.params.getValue("category")
+            context.route.params.getValue(CATEGORY_PARAM)
         } else if (hasQueryParam) {
-            context.route.params.getValue("query")
+            context.route.params.getValue(QUERY_PARAM)
         } else {
             ""
         }
@@ -150,53 +153,56 @@ fun SearchPage() {
             }
 
             PostsSection(
-            breakpoint = breakpoint,
-            posts = searchedPosts,
-            showMoreVisibility = showMorePosts,
-            onShowMore = {
-                scope.launch {
-                    if (hasCategoryParam) {
-                        searchPostsByCategory(
-                            category = runCatching { Category.valueOf(value) }
-                                .getOrElse { Category.Programming },
-                            skip = postsToSkip,
-                            onSuccess = { response ->
-                                apiResponse = response
-                                if (response is ApiListResponse.Success) {
-                                    if (response.data.isNotEmpty()) {
-                                        if (response.data.size < Constants.POSTS_PER_PAGE) {
+                breakpoint = breakpoint,
+                posts = searchedPosts,
+                showMoreVisibility = showMorePosts,
+                onShowMore = {
+                    scope.launch {
+                        if (hasCategoryParam) {
+                            searchPostsByCategory(
+                                category = runCatching { Category.valueOf(value) }
+                                    .getOrElse { Category.Programming },
+                                skip = postsToSkip,
+                                onSuccess = { response ->
+                                    apiResponse = response
+                                    if (response is ApiListResponse.Success) {
+                                        if (response.data.isNotEmpty()) {
+                                            if (response.data.size < Constants.POSTS_PER_PAGE) {
+                                                showMorePosts = false
+                                            }
+                                            searchedPosts.clear()
+                                            searchedPosts.addAll(response.data)
+                                            postsToSkip += Constants.POSTS_PER_PAGE
+                                        } else {
                                             showMorePosts = false
                                         }
+                                    }
+                                },
+                                onError = { }
+                            )
+                        } else if (hasQueryParam) {
+                            searchPostsByTittle(
+                                query = value,
+                                skip = postsToSkip,
+                                onSuccess = { response ->
+                                    apiResponse = response
+                                    if (response is ApiListResponse.Success) {
                                         searchedPosts.clear()
                                         searchedPosts.addAll(response.data)
                                         postsToSkip += Constants.POSTS_PER_PAGE
-                                    } else {
-                                        showMorePosts = false
+                                        showMorePosts =
+                                            response.data.size >= Constants.POSTS_PER_PAGE
                                     }
-                                }
-                            },
-                            onError = { }
-                        )
-                    } else if (hasQueryParam) {
-                        searchPostsByTittle(
-                            query = value,
-                            skip = postsToSkip,
-                            onSuccess = { response ->
-                                apiResponse = response
-                                if (response is ApiListResponse.Success) {
-                                    searchedPosts.clear()
-                                    searchedPosts.addAll(response.data)
-                                    postsToSkip += Constants.POSTS_PER_PAGE
-                                    showMorePosts = response.data.size >= Constants.POSTS_PER_PAGE
-                                }
-                            },
-                            onError = {},
-                        )
+                                },
+                                onError = {},
+                            )
+                        }
                     }
+                },
+                onClick = {
+                    context.router.navigateTo(Screen.PostPage.getPost(id = it))
                 }
-            },
-            onClick = {}
-        )
+            )
         } else {
             LoadingIndicator()
         }

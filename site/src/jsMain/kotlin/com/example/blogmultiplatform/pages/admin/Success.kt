@@ -3,6 +3,7 @@ package com.example.blogmultiplatform.pages.admin
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.example.blogmultiplatform.Constants.FONT_FAMILY
+import com.example.blogmultiplatform.Constants.UPDATE_PARAM
 import com.example.blogmultiplatform.Res
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.navigation.Screen
@@ -28,7 +29,7 @@ import org.jetbrains.compose.web.css.px
 @Composable
 fun SuccessPage() {
     val context = rememberPageContext()
-    val postUpdated = context.route.params.containsKey("updated")
+    val postUpdated = context.route.params.containsKey(UPDATE_PARAM)
 
     LaunchedEffect(Unit) {
         delay(2000)

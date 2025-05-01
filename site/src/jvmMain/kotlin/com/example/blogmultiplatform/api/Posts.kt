@@ -1,5 +1,10 @@
 package com.example.blogmultiplatform.api
 
+import com.example.blogmultiplatform.Constants.AUTHOR_PARAM
+import com.example.blogmultiplatform.Constants.CATEGORY_PARAM
+import com.example.blogmultiplatform.Constants.POST_ID_PARAM
+import com.example.blogmultiplatform.Constants.QUERY_PARAM
+import com.example.blogmultiplatform.Constants.SKIP_PARAM
 import com.example.blogmultiplatform.data.MongoDB
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.ApiResponse
@@ -59,8 +64,8 @@ suspend fun updatePost(context: ApiContext) {
 suspend fun readMyPosts(context: ApiContext) {
 
     try {
-        val skip = context.req.params["skip"]?.toInt() ?: 0
-        val author = context.req.params["author"] ?: ""
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
+        val author = context.req.params[AUTHOR_PARAM] ?: ""
         val result = context.data.getValue<MongoDB>().readMyPosts(skip, author)
 
         context.res.setBody(
@@ -93,7 +98,7 @@ suspend fun readMainPosts(context: ApiContext) {
 @Api(routeOverride = "readlatestposts")
 suspend fun readLatestPosts(context: ApiContext) {
     try {
-        val skip = context.req.params["skip"]?.toInt() ?: 0
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
         val result = context.data.getValue<MongoDB>().readLatestPosts(skip)
 
         context.res.setBody(
@@ -110,7 +115,7 @@ suspend fun readLatestPosts(context: ApiContext) {
 @Api(routeOverride = "readpopularposts")
 suspend fun readPopularPosts(context: ApiContext) {
     try {
-        val skip = context.req.params["skip"]?.toInt() ?: 0
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
         val result = context.data.getValue<MongoDB>().readPopularPosts(skip)
 
         context.res.setBody(
@@ -160,8 +165,8 @@ suspend fun deleteSelectedPosts(context: ApiContext) {
 @Api(routeOverride = "searchposts")
 suspend fun searchPostsByTittle(context: ApiContext) {
     try {
-        val query = context.req.params["query"] ?: ""
-        val skip = context.req.params["skip"]?.toInt() ?: 0
+        val query = context.req.params[QUERY_PARAM] ?: ""
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
         val request = context.data.getValue<MongoDB>().searchPostsByTittle(query, skip)
 
         context.res.setBody(
@@ -179,9 +184,9 @@ suspend fun searchPostsByTittle(context: ApiContext) {
 suspend fun searchPostsByCategory(context: ApiContext) {
     try {
         val category = Category.valueOf(
-            context.req.params["category"] ?: Category.Programming.name
+            context.req.params[CATEGORY_PARAM] ?: Category.Programming.name
         )
-        val skip = context.req.params["skip"]?.toInt() ?: 0
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
         val request = context.data.getValue<MongoDB>().searchPostsByCategory(category, skip)
 
         context.res.setBody(
@@ -197,7 +202,7 @@ suspend fun searchPostsByCategory(context: ApiContext) {
 
 @Api(routeOverride = "readselectedpost")
 suspend fun readSelectedPost(context: ApiContext) {
-    val postId = context.req.params["postId"]
+    val postId = context.req.params[POST_ID_PARAM]
 
     if (!postId.isNullOrEmpty()) {
         try {

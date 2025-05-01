@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants
+import com.example.blogmultiplatform.Constants.POST_ID_PARAM
 import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.components.AdminPageLayout
@@ -153,11 +154,11 @@ fun CreateScreen() {
     val context = rememberPageContext()
 
     val hasPostIdParam = remember(key1 = context.route) {
-        context.route.params.containsKey("postId")
+        context.route.params.containsKey(POST_ID_PARAM)
     }
     LaunchedEffect(hasPostIdParam) {
         if (hasPostIdParam) {
-            val postId = context.route.params["postId"] ?: ""
+            val postId = context.route.params[POST_ID_PARAM] ?: ""
             val response = fetchSelectedPost(postId)
             if (response is ApiResponse.Success) {
                 println(response.data)

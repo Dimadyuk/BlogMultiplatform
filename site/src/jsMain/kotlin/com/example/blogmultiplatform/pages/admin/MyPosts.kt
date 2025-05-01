@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants.FONT_FAMILY
 import com.example.blogmultiplatform.Constants.POSTS_PER_PAGE
+import com.example.blogmultiplatform.Constants.QUERY_PARAM
 import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.components.AdminPageLayout
@@ -90,9 +91,9 @@ fun MyPostsScreen() {
     var selectableMode by remember { mutableStateOf(false) }
     var switchText by remember { mutableStateOf("Select") }
 
-    val hasParams = remember(key1 = context.route) { context.route.params.containsKey("query") }
+    val hasParams = remember(key1 = context.route) { context.route.params.containsKey(QUERY_PARAM) }
     val query = remember(key1 = context.route) {
-        context.route.params["query"] ?: ""
+        context.route.params[QUERY_PARAM] ?: ""
     }
 
     LaunchedEffect(context.route) {
