@@ -12,6 +12,7 @@ import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.Res
 import com.example.blogmultiplatform.components.CategoryNavigationItems
+import com.example.blogmultiplatform.components.LoadingIndicator
 import com.example.blogmultiplatform.components.OverflowSidePanel
 import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.Category
@@ -46,6 +47,7 @@ fun SearchPage() {
     val breakpoint = rememberBreakpoint()
     val scope = rememberCoroutineScope()
 
+    var apiResponse by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
     var overflowOpened by remember { mutableStateOf(false) }
     var showMorePosts by remember { mutableStateOf(false) }
     var postsToSkip by remember { mutableStateOf(0) }
@@ -71,9 +73,11 @@ fun SearchPage() {
         postsToSkip = 0
         if (hasCategoryParam) {
             searchPostsByCategory(
-                category = Category.valueOf(value),
+                category = runCatching { Category.valueOf(value) }
+                    .getOrElse { Category.Programming },
                 skip = postsToSkip,
                 onSuccess = { response ->
+                    apiResponse = response
                     if (response is ApiListResponse.Success) {
                         searchedPosts.clear()
                         searchedPosts.addAll(response.data)
@@ -91,6 +95,7 @@ fun SearchPage() {
                 query = value,
                 skip = postsToSkip,
                 onSuccess = { response ->
+                    apiResponse = response
                     if (response is ApiListResponse.Success) {
                         searchedPosts.clear()
                         searchedPosts.addAll(response.data)
@@ -107,7 +112,8 @@ fun SearchPage() {
             onMenuClose = { overflowOpened = false },
             content = {
                 CategoryNavigationItems(
-                    selectedCategory = if (hasCategoryParam) Category.valueOf(value) else null,
+                    selectedCategory = if (hasCategoryParam) runCatching { Category.valueOf(value) }
+                        .getOrElse { Category.Programming } else null,
                     vertical = true
                 )
             }
@@ -122,25 +128,28 @@ fun SearchPage() {
 
         HeaderSection(
             breakpoint = breakpoint,
-            selectedCategory = if (hasCategoryParam) Category.valueOf(value) else null,
+            selectedCategory = if (hasCategoryParam) runCatching { Category.valueOf(value) }
+                .getOrElse { Category.Programming } else null,
             logo = Res.Image.LOGO,
             onMenuOpen = { overflowOpened = true }
         )
-        if (hasCategoryParam) {
-            SpanText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .margin(
-                        top = 50.px,
-                        bottom = 40.px
-                    )
-                    .textAlign(TextAlign.Center)
-                    .fontFamily(Constants.FONT_FAMILY)
-                    .fontSize(36.px),
-                text = value
-            )
-        }
-        PostsSection(
+        if (apiResponse is ApiListResponse.Success) {
+            if (hasCategoryParam) {
+                SpanText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .margin(
+                            top = 50.px,
+                            bottom = 40.px
+                        )
+                        .textAlign(TextAlign.Center)
+                        .fontFamily(Constants.FONT_FAMILY)
+                        .fontSize(36.px),
+                    text = value.ifEmpty { Category.Programming.name }
+                )
+            }
+
+            PostsSection(
             breakpoint = breakpoint,
             posts = searchedPosts,
             showMoreVisibility = showMorePosts,
@@ -148,9 +157,11 @@ fun SearchPage() {
                 scope.launch {
                     if (hasCategoryParam) {
                         searchPostsByCategory(
-                            category = Category.valueOf(value),
+                            category = runCatching { Category.valueOf(value) }
+                                .getOrElse { Category.Programming },
                             skip = postsToSkip,
                             onSuccess = { response ->
+                                apiResponse = response
                                 if (response is ApiListResponse.Success) {
                                     if (response.data.isNotEmpty()) {
                                         if (response.data.size < Constants.POSTS_PER_PAGE) {
@@ -171,6 +182,7 @@ fun SearchPage() {
                             query = value,
                             skip = postsToSkip,
                             onSuccess = { response ->
+                                apiResponse = response
                                 if (response is ApiListResponse.Success) {
                                     searchedPosts.clear()
                                     searchedPosts.addAll(response.data)
@@ -185,5 +197,8 @@ fun SearchPage() {
             },
             onClick = {}
         )
+        } else {
+            LoadingIndicator()
+        }
     }
 }
