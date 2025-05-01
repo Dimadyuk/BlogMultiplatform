@@ -18,6 +18,7 @@ import com.example.blogmultiplatform.components.OverflowSidePanel
 import com.example.blogmultiplatform.models.ApiResponse
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.Theme
+import com.example.blogmultiplatform.sections.FooterSection
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.example.blogmultiplatform.utils.fetchSelectedPost
 import com.example.blogmultiplatform.utils.parseDateString
@@ -35,6 +36,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.id
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
+import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.textOverflow
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.toAttrs
@@ -112,6 +114,7 @@ fun PostPage() {
                 ErrorView(message = errorMessage)
             }
         }
+        FooterSection()
     }
 }
 
@@ -123,7 +126,8 @@ fun PostContent(post: Post) {
 
     Column(
         modifier = Modifier
-            .margin(top = 50.px, bottom = 100.px)
+            .margin(top = 50.px, bottom = 200.px)
+            .padding(leftRight = 24.px)
             .fillMaxWidth()
             .maxWidth(800.px),
         horizontalAlignment = Alignment.CenterHorizontally,

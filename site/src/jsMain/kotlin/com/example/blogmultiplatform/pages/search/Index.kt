@@ -20,6 +20,7 @@ import com.example.blogmultiplatform.models.ApiListResponse
 import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.navigation.Screen
+import com.example.blogmultiplatform.sections.FooterSection
 import com.example.blogmultiplatform.sections.HeaderSection
 import com.example.blogmultiplatform.sections.PostsSection
 import com.example.blogmultiplatform.utils.searchPostsByCategory
@@ -206,5 +207,6 @@ fun SearchPage() {
         } else {
             LoadingIndicator()
         }
+        FooterSection()
     }
 }
