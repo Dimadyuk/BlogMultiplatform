@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.mongodb.realm)
+    alias((libs.plugins.kotlin.serialization))
 }
 
 android {
@@ -49,4 +51,12 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     debugImplementation(libs.ui.tooling)
+
+    implementation(libs.kotlinx.coroutines)
+    implementation(libs.mongo.sync)
+    implementation(libs.coil.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization)
+
+    implementation(project(":site"))
 }

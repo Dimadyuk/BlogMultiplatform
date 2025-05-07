@@ -1,5 +1,5 @@
 [versions]
-jetbrains-compose = "1.7.1"
+jetbrains-compose = "1.7.3"
 kobweb = "0.20.0"
 kotlin = "2.1.0"
 kmongo = "5.2.1"
@@ -9,10 +9,16 @@ core-ktx = "1.16.0"
 lifecycle-runtime-ktx = "2.8.7"
 activity-compose = "1.10.1"
 compose-bom = "2024.09.00"
+navigation = "2.7.5"
+coroutine = "1.7.3"
+mongodb = "2.3.0"
+coil = "2.4.0"
 
 [libraries]
 compose-html-core = { module = "org.jetbrains.compose.html:html-core", version.ref = "jetbrains-compose" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+
 kobweb-api = { module = "com.varabyte.kobweb:kobweb-api", version.ref = "kobweb" }
 kobweb-core = { module = "com.varabyte.kobweb:kobweb-core ", version.ref = "kobweb" }
 kobweb-silk = { module = "com.varabyte.kobweb:kobweb-silk", version.ref = "kobweb" }
@@ -25,7 +31,10 @@ silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", version.ref =
 
 kmongo-kotlin-driver = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "kmongo" }
 kmongo-serialization = { module = "org.mongodb:bson-kotlinx", version.ref = "kmongo" }
+mongo-sync = { module = "io.realm.kotlin:library-sync", version.ref = "mongodb" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
@@ -47,3 +56,4 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+mongodb-realm = { id = "io.realm.kotlin", version.ref = "mongodb" }
