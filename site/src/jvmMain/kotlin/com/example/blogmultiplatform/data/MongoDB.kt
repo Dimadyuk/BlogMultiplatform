@@ -25,10 +25,7 @@ fun initMongoDB(context: InitApiContext) {
 }
 
 class MongoDB(private val context: InitApiContext) : MongoRepository {
-    private val uri = "mongodb://localhost:27017/"
-    private val connectionString =
-        "mongodb+srv://dimadyuk:Qwer123@mycluster.io9cztj.mongodb.net/?retryWrites=true&w=majority&appName=MyCluster"
-    private val client = MongoClient.create(connectionString)
+    private val client = MongoClient.create(System.getenv("MONGODB_URI"))
     private val database = client.getDatabase(DATABASE_NAME_REMOTE)
     private val userCollection = database.getCollection<User>("user")
     private val postCollection = database.getCollection<Post>("post")
