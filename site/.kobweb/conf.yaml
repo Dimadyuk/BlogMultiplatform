@@ -10,5 +10,10 @@ server:
     prod:
       script: "build/kotlin-webpack/js/productionExecutable/blogmultiplatform.js"
       siteRoot: ".kobweb/site"
+      cors:
+        hosts:
+          -name: "blogmultiplatform-r98d.onrender.com"
+          schemes:
+            - "https"
 
   port: 8080
