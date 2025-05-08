@@ -171,7 +171,7 @@ fun CreateScreen() {
                     subtitle = response.data.subtitle,
                     thumbnail = response.data.thumbnail,
                     content = response.data.content,
-                    category = response.data.category,
+                    category = response.data.category as Category,
                     buttonText = "Update",
                     main = response.data.main,
                     popular = response.data.popular,

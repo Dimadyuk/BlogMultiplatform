@@ -1,11 +1,11 @@
 package com.example.androidapp.navigation
 
-import com.example.blogmultiplatform.models.Category as PostCategory
+import com.example.androidapp.models.Category
 
 sealed class Screen(val route: String) {
     data object HomeScreen : Screen(route = "home_screen")
     data object CategoryScreen : Screen(route = "category_screen/{category}") {
-        fun passCategory(category: PostCategory): String {
+        fun passCategory(category: Category): String {
             return "category_screen/${category.name}"
         }
     }

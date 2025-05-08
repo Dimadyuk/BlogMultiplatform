@@ -1,5 +1,6 @@
 package com.example.blogmultiplatform.models
 
+import com.example.blogmultiplatform.CategoryCommon
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,7 +14,7 @@ data class Post(
     val subtitle: String,
     val thumbnail: String,
     val content: String = "",
-    val category: Category,
+    val category: CategoryCommon,
     val popular: Boolean = false,
     val main: Boolean = false,
     val sponsored: Boolean = false,
@@ -28,7 +29,7 @@ data class PostWithoutDetails(
     val title: String,
     val subtitle: String,
     val thumbnail: String,
-    val category: Category,
+    val category: CategoryCommon,
     val popular: Boolean = false,
     val main: Boolean = false,
     val sponsored: Boolean = false,
