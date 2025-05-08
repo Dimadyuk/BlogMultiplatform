@@ -1,6 +1,6 @@
 package com.example.blogmultiplatform.data
 
-import com.example.blogmultiplatform.Constants.DATABASE_NAME
+import com.example.blogmultiplatform.Constants.DATABASE_NAME_REMOTE
 import com.example.blogmultiplatform.Constants.MAIN_POSTS_LIMIT
 import com.example.blogmultiplatform.Constants.POSTS_PER_PAGE
 import com.example.blogmultiplatform.models.Category
@@ -26,8 +26,10 @@ fun initMongoDB(context: InitApiContext) {
 
 class MongoDB(private val context: InitApiContext) : MongoRepository {
     private val uri = "mongodb://localhost:27017/"
-    private val client = MongoClient.create(uri)
-    private val database = client.getDatabase(DATABASE_NAME)
+    private val connectionString =
+        "mongodb+srv://dimadyuk:Qwer123@mycluster.io9cztj.mongodb.net/?retryWrites=true&w=majority&appName=MyCluster"
+    private val client = MongoClient.create(connectionString)
+    private val database = client.getDatabase(DATABASE_NAME_REMOTE)
     private val userCollection = database.getCollection<User>("user")
     private val postCollection = database.getCollection<Post>("post")
     private val newsletterCollection = database.getCollection<Newsletter>("newsletter")

@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Constants
+import com.example.blogmultiplatform.Constants.FONT_FAMILY
 import com.example.blogmultiplatform.Constants.POST_ID_PARAM
 import com.example.blogmultiplatform.Constants.SIDE_PANEL_WIDTH
 import com.example.blogmultiplatform.Id
@@ -75,15 +76,14 @@ import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.forms.Button
-import com.varabyte.kobweb.silk.components.forms.Input
 import com.varabyte.kobweb.silk.components.forms.Switch
 import com.varabyte.kobweb.silk.components.forms.SwitchSize
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
+import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
+import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
-import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
-import com.varabyte.kobweb.silk.style.toModifier
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
@@ -100,28 +100,27 @@ import org.w3c.dom.HTMLTextAreaElement
 import kotlin.js.Date
 
 data class CreatePageUiState(
-    val id: String = "",
-    val title: String = "",
-    val subtitle: String = "",
-    val thumbnail: String = "",
-    val thumbnailInputEnabled: Boolean = false,
-    val content: String = "",
-    val category: Category = Category.Programming,
-    val buttonText: String = "Create",
-    val main: Boolean = false,
-    val popular: Boolean = false,
-    val sponsored: Boolean = false,
-    val editorVisibility: Boolean = true,
-    val messagePopup: Boolean = false,
-    val linkPopup: Boolean = false,
-    val imagePopup: Boolean = false,
+    var id: String = "",
+    var title: String = "",
+    var subtitle: String = "",
+    var thumbnail: String = "",
+    var thumbnailInputEnabled: Boolean = false,
+    var content: String = "",
+    var category: Category = Category.Programming,
+    var buttonText: String = "Create",
+    var popular: Boolean = false,
+    var main: Boolean = false,
+    var sponsored: Boolean = false,
+    var editorVisibility: Boolean = true,
+    var messagePopup: Boolean = false,
+    var linkPopup: Boolean = false,
+    var imagePopup: Boolean = false
 ) {
     fun reset() = this.copy(
         id = "",
         title = "",
         subtitle = "",
         thumbnail = "",
-        thumbnailInputEnabled = false,
         content = "",
         category = Category.Programming,
         buttonText = "Create",
@@ -281,46 +280,40 @@ fun CreateScreen() {
                         )
                     }
                 }
-                Input(
+                org.jetbrains.compose.web.dom.Input(
                     type = InputType.Text,
-                    modifier = Modifier
+                    attrs = Modifier
                         .id(Id.titleInput)
                         .fillMaxWidth()
                         .height(54.px)
                         .margin(topBottom = 12.px)
                         .padding(leftRight = 20.px)
                         .backgroundColor(Theme.LightGray.rgb)
-                        .color(Colors.Black)
                         .borderRadius(r = 4.px)
                         .noBorder()
-                        .fontFamily(Constants.FONT_FAMILY)
-                        .fontSize(16.px),
-                    placeholder = "Title",
-                    value = uiState.title,
-                    onValueChange = {
-                        uiState = uiState.copy(title = it)
-                    },
+                        .fontFamily(FONT_FAMILY)
+                        .fontSize(16.px)
+                        .toAttrs {
+                            attr("placeholder", "Title")
+                            attr("value", uiState.title)
+                        }
                 )
-                Input(
+                org.jetbrains.compose.web.dom.Input(
                     type = InputType.Text,
-                    focusBorderColor = Theme.Primary.rgb,
-                    modifier = Modifier
+                    attrs = Modifier
                         .id(Id.subtitleInput)
                         .fillMaxWidth()
                         .height(54.px)
-                        .margin(bottom = 12.px)
                         .padding(leftRight = 20.px)
                         .backgroundColor(Theme.LightGray.rgb)
-                        .color(Colors.Black)
                         .borderRadius(r = 4.px)
                         .noBorder()
-                        .fontFamily(Constants.FONT_FAMILY)
-                        .fontSize(16.px),
-                    placeholder = "Subtitle",
-                    value = uiState.subtitle,
-                    onValueChange = {
-                        uiState = uiState.copy(subtitle = it)
-                    },
+                        .fontFamily(FONT_FAMILY)
+                        .fontSize(16.px)
+                        .toAttrs {
+                            attr("placeholder", "Subtitle")
+                            attr("value", uiState.subtitle)
+                        }
                 )
                 var expanded by remember { mutableStateOf(false) }
 
@@ -363,18 +356,11 @@ fun CreateScreen() {
                 }
                 ThumbnailUploader(
                     thumbnail = uiState.thumbnail,
-                    thumbnailInputEnabled = !uiState.thumbnailInputEnabled,
+                    thumbnailInputDisabled = uiState.thumbnailInputEnabled,
                     onThumbnailSelect = { filename, file ->
-                        (document
-                            .getElementById(Id.thumbnailInput) as HTMLInputElement)
-                            .value = filename
-
+                        (document.getElementById(Id.thumbnailInput) as HTMLInputElement).value =
+                            filename
                         uiState = uiState.copy(thumbnail = file)
-                        println("file - $file")
-                        println("filename -$filename")
-                    },
-                    onValueChanged = {
-                        uiState = uiState.copy(thumbnail = it)
                     }
                 )
                 EditorControls(
@@ -594,69 +580,66 @@ fun DropdownItem(text: String, onClick: () -> Unit) {
 @Composable
 fun ThumbnailUploader(
     thumbnail: String,
-    thumbnailInputEnabled: Boolean,
-    onThumbnailSelect: (String, String) -> Unit,
-    onValueChanged: (String) -> Unit
+    thumbnailInputDisabled: Boolean,
+    onThumbnailSelect: (String, String) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .margin(bottom = 20.px)
-            .height(54.px),
-        verticalAlignment = Alignment.CenterVertically
+            .height(54.px)
     ) {
-        Input(
+        org.jetbrains.compose.web.dom.Input(
             type = InputType.Text,
-            modifier = Modifier
+            attrs = Modifier
                 .id(Id.thumbnailInput)
-                .fillMaxWidth()
-                .height(54.px)
-                .margin(topBottom = 12.px)
-                .margin(right = 20.px)
+                .fillMaxSize()
+                .margin(right = 12.px)
                 .padding(leftRight = 20.px)
                 .backgroundColor(Theme.LightGray.rgb)
-                .color(Colors.Black)
                 .borderRadius(r = 4.px)
                 .noBorder()
-                .fontFamily(Constants.FONT_FAMILY)
+                .fontFamily(FONT_FAMILY)
                 .fontSize(16.px)
                 .thenIf(
-                    condition = thumbnailInputEnabled,
+                    condition = thumbnailInputDisabled,
                     other = Modifier.disabled()
-                ),
-            placeholder = "Thumbnail",
-            value = thumbnail,
-            onValueChange = {
-                onValueChanged(it)
-            },
+                )
+                .toAttrs {
+                    attr("placeholder", "Thumbnail")
+                    attr("value", thumbnail)
+                }
         )
-        Button(
-            modifier = Modifier
+        org.jetbrains.compose.web.dom.Button(
+            attrs = Modifier
+                .onClick {
+                    document.loadDataUrlFromDisk(
+                        accept = "image/png, image/jpeg",
+                        onLoad = {
+                            onThumbnailSelect(filename, it)
+                        }
+                    )
+                }
                 .fillMaxHeight()
                 .padding(leftRight = 24.px)
-                .backgroundColor(if (thumbnailInputEnabled) Theme.Primary.rgb else Theme.LightGray.rgb)
-                .color(if (thumbnailInputEnabled) Colors.White else Theme.HalfBlack.rgb)
-                .noBorder()
+                .backgroundColor(if (!thumbnailInputDisabled) Theme.LightGray.rgb else Theme.Primary.rgb)
+                .color(if (!thumbnailInputDisabled) Theme.Grey.rgb else Colors.White)
                 .borderRadius(r = 4.px)
+                .noBorder()
+                .fontFamily(FONT_FAMILY)
+                .fontWeight(FontWeight.Medium)
+                .fontSize(14.px)
                 .thenIf(
-                    condition = !thumbnailInputEnabled,
+                    condition = !thumbnailInputDisabled,
                     other = Modifier.disabled()
-                ),
-            onClick = {
-                document.loadDataUrlFromDisk(
-                    accept = "image/png, image/jpeg",
-                    onLoad = {
-                        onThumbnailSelect(filename, it)
-                    }
                 )
-            }
+                .toAttrs()
         ) {
-            SpanText(
-                text = "Upload"
-            )
+            SpanText(text = "Upload")
         }
     }
 }
+
 
 @Composable
 fun EditorControls(

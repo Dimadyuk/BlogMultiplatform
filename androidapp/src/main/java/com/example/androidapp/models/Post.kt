@@ -5,11 +5,12 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 
 open class Post : RealmObject {
     @PrimaryKey
-    val _id: String = ""
-    val author: String = ""
-    val date: Long = 0L
-    val title: String = ""
-    val subtitle: String = ""
-    val thumbnail: String = ""
-    val category: String = Category.Programming.name
+    var _id: String = ""
+    var author: String = ""
+    var date: Long = 0L
+    var title: String = ""
+    var subtitle: String = ""
+    var thumbnail: String = ""
+    var category: String = Category.Programming.name
 }
+

@@ -26,9 +26,9 @@ import com.example.blogmultiplatform.utils.fetchMyPosts
 import com.example.blogmultiplatform.utils.noBorder
 import com.example.blogmultiplatform.utils.parseSwitchText
 import com.example.blogmultiplatform.utils.searchPostsByTittle
+import com.varabyte.kobweb.compose.css.CSSTransition
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
-import com.varabyte.kobweb.compose.css.Transition
 import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
@@ -58,8 +58,8 @@ import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.forms.Switch
 import com.varabyte.kobweb.silk.components.forms.SwitchSize
+import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.text.SpanText
-import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import kotlinx.browser.document
 import kotlinx.coroutines.launch
@@ -154,7 +154,7 @@ fun MyPostsScreen() {
                     modifier = Modifier
                         .visibility(if (selectableMode) Visibility.Hidden else Visibility.Visible)
                         .transition(
-                            Transition.of(
+                            CSSTransition(
                                 property = TransitionProperty.All,
                                 duration = 200.ms,
                             )

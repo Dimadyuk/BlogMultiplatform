@@ -9,8 +9,8 @@ import androidx.compose.runtime.setValue
 import com.example.blogmultiplatform.Id
 import com.example.blogmultiplatform.models.Theme
 import com.example.blogmultiplatform.utils.noBorder
+import com.varabyte.kobweb.compose.css.CSSTransition
 import com.varabyte.kobweb.compose.css.Cursor
-import com.varabyte.kobweb.compose.css.Transition
 import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Alignment
@@ -35,7 +35,7 @@ import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.silk.components.icons.fa.FaMagnifyingGlass
 import com.varabyte.kobweb.silk.components.icons.fa.IconSize
-import com.varabyte.kobweb.silk.style.breakpoint.Breakpoint
+import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.ms
@@ -77,7 +77,7 @@ fun SearchBar(
                     else Theme.LightGray.rgb
                 )
                 .transition(
-                    Transition.of(
+                    CSSTransition(
                         property = TransitionProperty.All,
                         duration = 200.ms,
                     )

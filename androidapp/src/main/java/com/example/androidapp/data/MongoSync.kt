@@ -5,6 +5,7 @@ import com.example.androidapp.models.Post
 import com.example.androidapp.util.Constants.CONNECTION_STRING
 import com.example.androidapp.util.RequestState
 import io.realm.kotlin.Realm
+import io.realm.kotlin.ext.query
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import kotlinx.coroutines.flow.Flow
