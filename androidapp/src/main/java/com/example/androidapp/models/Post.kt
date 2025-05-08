@@ -3,7 +3,7 @@ package com.example.androidapp.models
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 
-open class PostSync : RealmObject {
+open class Post : RealmObject {
     @PrimaryKey
     val _id: String = ""
     val author: String = ""
