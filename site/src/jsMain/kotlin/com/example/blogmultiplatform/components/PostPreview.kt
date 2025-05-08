@@ -9,6 +9,7 @@ import com.example.blogmultiplatform.Constants
 import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.PostWithoutDetails
 import com.example.blogmultiplatform.models.Theme
+import com.example.blogmultiplatform.styles.MainPostPreviewStyle
 import com.example.blogmultiplatform.styles.PostPreviewStyle
 import com.example.blogmultiplatform.utils.parseDateString
 import com.varabyte.kobweb.compose.css.CSSTransition
@@ -74,8 +75,17 @@ fun PostPreview(
 
     if (vertical) {
         Row(
-            modifier = PostPreviewStyle.toModifier()
+            modifier = Modifier
+                .thenIf(
+                    condition = post.main,
+                    other = MainPostPreviewStyle.toModifier()
+                )
+                .thenIf(
+                    condition = !post.main,
+                    other = PostPreviewStyle.toModifier()
+                )
                 .then(modifier)
+                .height(thumbnailHeight.px)
                 .onClick {
                     onClick(post.id)
                 }
@@ -94,7 +104,15 @@ fun PostPreview(
         }
     } else {
         Column(
-            modifier = PostPreviewStyle.toModifier()
+            modifier = Modifier
+                .thenIf(
+                    condition = post.main,
+                    other = MainPostPreviewStyle.toModifier()
+                )
+                .thenIf(
+                    condition = !post.main,
+                    other = PostPreviewStyle.toModifier()
+                )
                 .then(modifier)
                 .fillMaxWidth(
                     if (darkTheme) 100.percent
@@ -169,6 +187,7 @@ fun PostContent(
                 condition = vertical,
                 other = Modifier.margin(left = 20.px)
             )
+            .padding(all = 12.px)
             .fillMaxWidth()
     ) {
         SpanText(

@@ -1,9 +1,9 @@
 package com.example.blogmultiplatform.data
 
+import com.example.blogmultiplatform.Category
 import com.example.blogmultiplatform.Constants.DATABASE_NAME_REMOTE
 import com.example.blogmultiplatform.Constants.MAIN_POSTS_LIMIT
 import com.example.blogmultiplatform.Constants.POSTS_PER_PAGE
-import com.example.blogmultiplatform.models.Category
 import com.example.blogmultiplatform.models.Newsletter
 import com.example.blogmultiplatform.models.Post
 import com.example.blogmultiplatform.models.PostWithoutDetails
@@ -20,8 +20,12 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 
 @InitApi
-fun initMongoDB(context: InitApiContext) {
-    context.data.add(MongoDB(context))
+fun initMongoDB(ctx: InitApiContext) {
+    System.setProperty(
+        "org.litote.mongo.test.mapping.service",
+        "org.litote.kmongo.serialization.SerializationClassMappingTypeService"
+    )
+    ctx.data.add(MongoDB(ctx))
 }
 
 class MongoDB(private val context: InitApiContext) : MongoRepository {

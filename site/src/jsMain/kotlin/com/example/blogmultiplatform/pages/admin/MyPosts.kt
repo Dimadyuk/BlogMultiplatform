@@ -25,7 +25,7 @@ import com.example.blogmultiplatform.utils.deleteSelectedPosts
 import com.example.blogmultiplatform.utils.fetchMyPosts
 import com.example.blogmultiplatform.utils.noBorder
 import com.example.blogmultiplatform.utils.parseSwitchText
-import com.example.blogmultiplatform.utils.searchPostsByTittle
+import com.example.blogmultiplatform.utils.searchPostsByTitle
 import com.varabyte.kobweb.compose.css.CSSTransition
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
@@ -101,7 +101,7 @@ fun MyPostsScreen() {
         if (hasParams) {
             (document.getElementById(Id.adminSearchBar) as HTMLInputElement)
                 .value = query.replace("%20", " ")
-            searchPostsByTittle(
+            searchPostsByTitle(
                 query = query,
                 skip = postsToSkip,
                 onSuccess = {
@@ -248,7 +248,7 @@ fun MyPostsScreen() {
                 onShowMore = {
                     scope.launch {
                         if (hasParams) {
-                            searchPostsByTittle(
+                            searchPostsByTitle(
                                 query = query,
                                 skip = postsToSkip,
                                 onSuccess = {

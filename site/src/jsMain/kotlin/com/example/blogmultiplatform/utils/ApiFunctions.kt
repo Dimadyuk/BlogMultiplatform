@@ -234,7 +234,7 @@ suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
     }
 }
 
-suspend fun searchPostsByTittle(
+suspend fun searchPostsByTitle(
     query: String,
     skip: Int,
     onSuccess: (ApiListResponse) -> Unit,

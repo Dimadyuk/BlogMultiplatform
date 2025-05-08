@@ -77,6 +77,8 @@ fun MainPosts(
             ) {
                 posts.drop(1).forEach { post ->
                     PostPreview(
+                        modifier = Modifier
+                            .margin(bottom = 20.px),
                         post = post,
                         darkTheme = true,
                         vertical = true,
